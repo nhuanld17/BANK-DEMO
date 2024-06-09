@@ -1,8 +1,16 @@
 package COMPONENT;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.geom.RoundRectangle2D;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
 
 public class RoundedButton extends JButton {
     private int borderRadius;
@@ -30,6 +38,16 @@ public class RoundedButton extends JButton {
         // Vẽ nền của button
         g2.setColor(getBackground());
         g2.fillRoundRect(0, 0, getWidth() - shadowSize, getHeight() - shadowSize, borderRadius, borderRadius);
+        
+        // Vẽ icon nếu có
+        Icon icon = getIcon();
+        if (icon != null) {
+            int iconWidth = icon.getIconWidth();
+            int iconHeight = icon.getIconHeight();
+            int iconX = (getWidth() - iconWidth) / 2;
+            int iconY = (getHeight() - iconHeight) / 2;
+            icon.paintIcon(this, g2, iconX, iconY);
+        }
 
         // Vẽ text của button
         g2.setColor(getForeground());
