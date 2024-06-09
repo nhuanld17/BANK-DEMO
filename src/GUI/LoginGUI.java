@@ -7,6 +7,7 @@ import java.awt.Font;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
@@ -16,6 +17,9 @@ import COMPONENT.RoundedButton;
 import COMPONENT.RoundedPasswordField;
 import COMPONENT.RoundedTextField;
 import java.awt.Cursor;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.SystemColor;
 
 
 
@@ -24,6 +28,8 @@ public class LoginGUI extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private final JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+	private RoundedTextField roundedTextField;
+	private RoundedPasswordField roundedPasswordField;
 
 	/**
 	 * Launch the application.
@@ -101,7 +107,8 @@ public class LoginGUI extends JFrame {
 		lblNewLabel_3.setBounds(36, 101, 357, 27);
 		LoginPanel.add(lblNewLabel_3);
 		
-		RoundedTextField roundedTextField = new RoundedTextField(8, 1);
+		roundedTextField = new RoundedTextField(8, 1);
+		roundedTextField.setBackground(SystemColor.text);
 		roundedTextField.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 18));
 		roundedTextField.setForeground(new Color(50, 48, 49));
 		roundedTextField.setBounds(36, 130, 357, 42);
@@ -113,15 +120,21 @@ public class LoginGUI extends JFrame {
 		lblNewLabel_3_1.setBounds(36, 193, 357, 27);
 		LoginPanel.add(lblNewLabel_3_1);
 		
-		RoundedPasswordField roundedPasswordField = new RoundedPasswordField(8, 1);
+		roundedPasswordField = new RoundedPasswordField(8, 1);
+		roundedPasswordField.setBackground(SystemColor.text);
 		roundedPasswordField.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 18));
 		roundedPasswordField.setBounds(36, 223, 357, 42);
 		LoginPanel.add(roundedPasswordField);
 		
 		RoundedButton roundedButton = new RoundedButton("LOG IN WITH ADMIN RIGHT", 12, 2);
+		roundedButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				loginWithAdminRigth();
+			}
+		});
 		roundedButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		roundedButton.setHorizontalAlignment(SwingConstants.LEADING);
-		roundedButton.setForeground(new Color(245, 255, 182));
+		roundedButton.setForeground(new Color(238, 238, 238));
 		roundedButton.setVerticalAlignment(SwingConstants.TOP);
 		roundedButton.setFont(new Font("Segoe UI", Font.BOLD, 18));
 		roundedButton.setBackground(new Color(19, 41, 18));
@@ -132,7 +145,7 @@ public class LoginGUI extends JFrame {
 		rndbtnLogInWith.setText("LOG IN WITH CLIENT RIGHT");
 		rndbtnLogInWith.setVerticalAlignment(SwingConstants.TOP);
 		rndbtnLogInWith.setHorizontalAlignment(SwingConstants.LEADING);
-		rndbtnLogInWith.setForeground(new Color(245, 255, 182));
+		rndbtnLogInWith.setForeground(new Color(238, 238, 238));
 		rndbtnLogInWith.setFont(new Font("Segoe UI", Font.BOLD, 18));
 		rndbtnLogInWith.setBackground(new Color(19, 41, 18));
 		rndbtnLogInWith.setBounds(37, 329, 357, 44);
@@ -141,5 +154,17 @@ public class LoginGUI extends JFrame {
 		JPanel ResetPassPanel = new JPanel();
 		ResetPassPanel.setBackground(new Color(238, 238, 238));
 		tabbedPane.addTab("ResetPass", null, ResetPassPanel, null);
+	}
+
+	protected void loginWithAdminRigth() {
+		String username = roundedTextField.getText().trim();
+		String password = roundedPasswordField.getText().trim();
+		
+		if (username.isBlank() || password.isBlank()) {
+			JOptionPane.showMessageDialog(null, "Please, Fill full the information");
+			return;
+		}
+		
+		
 	}
 }
