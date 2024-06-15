@@ -34,7 +34,13 @@ public class Server {
 				String username = info[1];
 				String password = info[2];
 				
-				if (new AccountBUS().isValidAccount(username, password)) {
+				// Kiểm tra đăng nhập trùng lặp
+				if (isUserAlreadyLoggedIn(username)) {
+					writer.println("DUPLICATED_LOGIN");
+				}
+				
+				// Kiểm tra tài khoản và mật khẩu
+				else if (new AccountBUS().isValidAccount(username, password)) {
 					writer.println("ADMIN_LOGIN_SUCCESS");
 					ClientHandler clientHandler = new ClientHandler(username, reader, writer, clients);
 				}else {
@@ -42,6 +48,17 @@ public class Server {
 				}
 			}
 		}
+	}
+
+	private boolean isUserAlreadyLoggedIn(String username) {
+//		for (String usernameInList : clients.keySet()) {
+//			if (usernameInList.equals(username)) {
+//				return true;
+//			}
+//		}
+//		return false;
+		
+		return clients.containsKey(username);
 	}
 
 	private void setMaxConnecttion() {

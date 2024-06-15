@@ -15,11 +15,13 @@ import javax.swing.JFrame;
 public class RoundedButton extends JButton {
     private int borderRadius;
     private int shadowSize;
+    private Color color;
 
-    public RoundedButton(String text, int borderRadius, int shadowSize) {
+    public RoundedButton(String text, int borderRadius, int shadowSize, Color color) {
         super(text);
         this.borderRadius = borderRadius;
         this.shadowSize = shadowSize;
+        this.color = color;
         setOpaque(false); // Làm cho nền của JButton trong suốt
         setContentAreaFilled(false);
         setFocusPainted(false);
@@ -32,7 +34,7 @@ public class RoundedButton extends JButton {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         // Vẽ bóng
-        g2.setColor(Color.GRAY);
+        g2.setColor(color);
         g2.fillRoundRect(shadowSize, shadowSize, getWidth() - shadowSize, getHeight() - shadowSize, borderRadius, borderRadius);
 
         // Vẽ nền của button
@@ -73,7 +75,7 @@ public class RoundedButton extends JButton {
         frame.setSize(300, 300);
         frame.setLayout(new FlowLayout());
 
-        RoundedButton button = new RoundedButton("Rounded Button", 30, 5);
+        RoundedButton button = new RoundedButton("Rounded Button", 30, 5, Color.gray);
         button.setBackground(Color.BLUE);
         button.setForeground(Color.WHITE);
 

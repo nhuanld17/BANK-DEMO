@@ -8,7 +8,8 @@ import java.awt.geom.RoundRectangle2D;
 public class RoundedTextField extends JTextField {
     private int borderRadius;
     private int shadowSize;
-
+    
+    // màu mặc định là Color.GRAY  public static final Color gray = new Color(128, 128, 128);
     public RoundedTextField(int borderRadius, int shadowSize) {
         this.borderRadius = borderRadius;
         this.shadowSize = shadowSize;

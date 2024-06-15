@@ -15,7 +15,7 @@ public class RoundedButton extends JButton {
         setOpaque(false); // Làm cho nền của JButton trong suốt
         setContentAreaFilled(false);
         setFocusPainted(false);
-        setBorderPainted(false);
+        setBorderPainted(true);
     }
 
     @Override

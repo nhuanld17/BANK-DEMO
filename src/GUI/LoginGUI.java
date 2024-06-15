@@ -1,8 +1,19 @@
 package GUI;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.SystemColor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -17,17 +28,6 @@ import javax.swing.border.LineBorder;
 import COMPONENT.RoundedButton;
 import COMPONENT.RoundedPasswordField;
 import COMPONENT.RoundedTextField;
-import java.awt.Cursor;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.awt.event.ActionEvent;
-import java.awt.SystemColor;
 
 
 
@@ -85,15 +85,15 @@ public class LoginGUI extends JFrame {
 		
 		JLabel lblNewLabel_1 = new JLabel("JRT BANK");
 		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_1.setForeground(new Color(245, 255, 182));
+		lblNewLabel_1.setForeground(new Color(238, 238, 238));
 		lblNewLabel_1.setFont(new Font("Segoe UI", Font.BOLD, 30));
 		lblNewLabel_1.setBounds(0, 86, 281, 81);
 		panel.add(lblNewLabel_1);
 		
 		JLabel lblNewLabel_1_1 = new JLabel("Credibility and Responsibility");
 		lblNewLabel_1_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_1_1.setForeground(new Color(245, 255, 182));
-		lblNewLabel_1_1.setFont(new Font("Segoe UI Semibold", Font.BOLD, 18));
+		lblNewLabel_1_1.setForeground(new Color(238, 238, 238));
+		lblNewLabel_1_1.setFont(new Font("Segoe UI Semibold", Font.BOLD, 20));
 		lblNewLabel_1_1.setBounds(1, 265, 281, 41);
 		panel.add(lblNewLabel_1_1);
 		tabbedPane.setBounds(280, -25, 441, 506);
@@ -115,11 +115,12 @@ public class LoginGUI extends JFrame {
 		JLabel lblNewLabel_3 = new JLabel("Payee name:");
 		lblNewLabel_3.setForeground(new Color(50, 48, 49));
 		lblNewLabel_3.setFont(new Font("Segoe UI Semibold", Font.BOLD, 20));
-		lblNewLabel_3.setBounds(36, 101, 357, 27);
+		lblNewLabel_3.setBounds(39, 101, 357, 27);
 		LoginPanel.add(lblNewLabel_3);
 		
 		roundedTextField = new RoundedTextField(8, 1);
 		roundedTextField.setBackground(SystemColor.text);
+		roundedTextField.setBorder(new LineBorder(new Color(0,0,0), 2));
 		roundedTextField.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 18));
 		roundedTextField.setForeground(new Color(50, 48, 49));
 		roundedTextField.setBounds(39, 134, 357, 42);
@@ -128,7 +129,7 @@ public class LoginGUI extends JFrame {
 		JLabel lblNewLabel_3_1 = new JLabel("Password:");
 		lblNewLabel_3_1.setForeground(new Color(50, 48, 49));
 		lblNewLabel_3_1.setFont(new Font("Segoe UI Semibold", Font.BOLD, 20));
-		lblNewLabel_3_1.setBounds(36, 193, 357, 27);
+		lblNewLabel_3_1.setBounds(39, 193, 357, 27);
 		LoginPanel.add(lblNewLabel_3_1);
 		
 		roundedPasswordField = new RoundedPasswordField(8, 1);
@@ -137,7 +138,7 @@ public class LoginGUI extends JFrame {
 		roundedPasswordField.setBounds(39, 227, 357, 42);
 		LoginPanel.add(roundedPasswordField);
 		
-		RoundedButton roundedButton = new RoundedButton("LOG IN WITH ADMIN RIGHT", 12, 2);
+		RoundedButton roundedButton = new RoundedButton("LOG IN WITH ADMIN RIGHT", 12, 2, Color.gray);
 		roundedButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				loginWithAdminRigth();
@@ -152,7 +153,7 @@ public class LoginGUI extends JFrame {
 		roundedButton.setBounds(39, 293, 357, 44);
 		LoginPanel.add(roundedButton);
 		
-		RoundedButton rndbtnLogInWith = new RoundedButton("LOG IN WITH ADMIN RIGHT", 12, 2);
+		RoundedButton rndbtnLogInWith = new RoundedButton("LOG IN WITH ADMIN RIGHT", 12, 2, Color.gray);
 		rndbtnLogInWith.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		rndbtnLogInWith.setText("LOG IN WITH CLIENT RIGHT");
 		rndbtnLogInWith.setVerticalAlignment(SwingConstants.TOP);
@@ -181,7 +182,7 @@ public class LoginGUI extends JFrame {
 		tabbedPane.addTab("ResetPass", null, ResetPassPanel, null);
 		ResetPassPanel.setLayout(null);
 		
-		RoundedButton logOutButton = new RoundedButton("", 12, 0);
+		RoundedButton logOutButton = new RoundedButton("", 12, 0, Color.gray);
 		logOutButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		logOutButton.setIcon(new ImageIcon(LoginGUI.class.getResource("/icon/icons8-log-out-50.png")));
 		logOutButton.setBounds(5, 425, 55, 52);
@@ -206,30 +207,26 @@ public class LoginGUI extends JFrame {
 			socket = new Socket("localhost", 8000);
 			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			writer = new PrintWriter(socket.getOutputStream(), true);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		writer.println("ADMINLOGIN_"+username+"_"+password);
-
-		try {
+			
+			writer.println("ADMINLOGIN_"+username+"_"+password);
+			
 			String respone;
 			respone = reader.readLine();
 			
 			if (respone != null && respone.equals("ADMIN_LOGIN_SUCCESS")) {
 				JOptionPane.showMessageDialog(null, "Login successfully");
-				new AdminGUI().setVisible(true);
+				new AdminGUI(username, this.socket, this.reader, this.writer).setVisible(true);
 				setVisible(false);
-				return;
 			} else if (respone != null && respone.equals("ADMIN_LOGIN_FAILED")) {
 				JOptionPane.showMessageDialog(null, "Login failed !");
+				return;
+			} else if (respone != null && respone.equals("DUPLICATED_LOGIN") ) {
+				JOptionPane.showMessageDialog(null, "This account has been already logged in");
 				return;
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
 }

@@ -1,7 +1,9 @@
 package SERVER;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.HashMap;
 
 public class ClientHandler extends Thread{
@@ -22,6 +24,30 @@ public class ClientHandler extends Thread{
 	
 	@Override
 	public void run() {
-		
+		try {
+			while (true) {
+				String message = reader.readLine();
+				
+				if (message == null) {
+					throw new IOException("Client disconnected");
+				}
+				
+				if ("LOGOUT".equals(message)) {
+					break;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			clients.remove(username);
+			System.out.println("Removed: "+username);
+			try {
+				reader.close();
+				writer.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 }
