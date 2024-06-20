@@ -352,6 +352,10 @@ public class ClientFrame extends JFrame {
 		
 		JScrollPane scrollPane = new JScrollPane(panel_4);
 		
+		JPanel panel_5 = new JPanel();
+		panel_5.setBounds(10, 11, 577, 49);
+		panel_4.add(panel_5);
+		
 //		JPanel panel_5 = new JPanel();
 //		panel_5.setBackground(new Color(64, 49, 43));
 //		panel_5.setBounds(6, 6, 579, 49);

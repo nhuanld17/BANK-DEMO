@@ -4,7 +4,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
+import BUS.CheckingAccountBUS;
+import BUS.ClientBUS;
+import BUS.SavingAccountBUS;
 
 public class ClientHandler extends Thread{
 	private BufferedReader reader;
@@ -25,6 +31,14 @@ public class ClientHandler extends Thread{
 	@Override
 	public void run() {
 		try {
+			/*
+			 * phần này lấy danh sách payeeName từ db và gửi tới admin để khi tạo client, admin có thể tránh việc tạo
+			 * client với payeeName giống nhau
+			 */
+			if (this.username.equals("admin")) {
+				sendListPayeeName();
+				sendListUser();
+			}
 			while (true) {
 				String message = reader.readLine();
 				
@@ -34,6 +48,31 @@ public class ClientHandler extends Thread{
 				
 				if ("LOGOUT".equals(message)) {
 					break;
+				} else if (message.startsWith("CREATECLIENT")) {
+					System.out.println(message);
+					String[] infos = message.split("_");
+					String clientFullName = infos[1];
+					String email = infos[2];
+					String payeeAddress = infos[3];
+					String password = infos[4];
+					double checkingInit = Double.valueOf(infos[5]);
+					double savingInit = Double.valueOf(infos[6]);
+					
+					new ClientBUS().createClient(clientFullName, email, payeeAddress, password);
+					new SavingAccountBUS().createSavingAccount(payeeAddress, savingInit);
+					new CheckingAccountBUS().createCheckingAccount(payeeAddress, checkingInit);
+					
+					sendListPayeeName();
+					sendListUser();
+				} else if (message.startsWith("SEARCH:")) {
+					System.out.println("CLIENT_REQUEST:SEARCH");
+					String payeeName = message.substring(7);
+					String users ="SEARCHRESULT:" + new ClientBUS().searchClientByPayeeName(payeeName);
+					System.out.println("Kết quả tìm kiếm: "+users);
+					this.writer.println(users);
+				} else if (message.equals("GET_ALL_USERS")) {
+					sendListPayeeName();
+					sendListUser();
 				}
 			}
 		} catch (Exception e) {
@@ -49,5 +88,16 @@ public class ClientHandler extends Thread{
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private void sendListUser() {
+		String listUser ="LIST_USERS:" + new ClientBUS().getUserList();
+		this.writer.println(listUser);
+	}
+
+	private void sendListPayeeName() {
+		ArrayList<String> payeeList = new ClientBUS().getPayeeList();
+		String listPayeeStr = "LISTPAYEENAME_"+ String.join("_", payeeList);
+		this.writer.println(listPayeeStr);
 	}
 }

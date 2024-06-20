@@ -118,7 +118,7 @@ public class LoginGUI extends JFrame {
 		lblNewLabel_3.setBounds(39, 101, 357, 27);
 		LoginPanel.add(lblNewLabel_3);
 		
-		roundedTextField = new RoundedTextField(8, 1);
+		roundedTextField = new RoundedTextField(8, 1, Color.GRAY);
 		roundedTextField.setBackground(SystemColor.text);
 		roundedTextField.setBorder(new LineBorder(new Color(0,0,0), 2));
 		roundedTextField.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 18));

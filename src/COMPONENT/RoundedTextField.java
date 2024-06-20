@@ -8,15 +8,21 @@ import java.awt.geom.RoundRectangle2D;
 public class RoundedTextField extends JTextField {
     private int borderRadius;
     private int shadowSize;
+    private Color color;
     
     // màu mặc định là Color.GRAY  public static final Color gray = new Color(128, 128, 128);
-    public RoundedTextField(int borderRadius, int shadowSize) {
+    public RoundedTextField(int borderRadius, int shadowSize, Color color) {
         this.borderRadius = borderRadius;
         this.shadowSize = shadowSize;
+        this.color = color;
         setOpaque(false); // Làm cho nền của JTextField trong suốt
     }
 
-    @Override
+	public void setColor(Color color) {
+		this.color = color;
+	}
+
+	@Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -55,7 +61,7 @@ public class RoundedTextField extends JTextField {
         frame.setSize(400, 200);
         frame.setLayout(new FlowLayout());
 
-        RoundedTextField textField = new RoundedTextField(30, 5);
+        RoundedTextField textField = new RoundedTextField(30, 5, Color.GRAY);
         textField.setPreferredSize(new Dimension(200, 40));
         textField.setBackground(Color.WHITE);
         textField.setForeground(Color.BLACK);

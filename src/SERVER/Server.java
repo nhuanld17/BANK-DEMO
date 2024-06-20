@@ -51,13 +51,6 @@ public class Server {
 	}
 
 	private boolean isUserAlreadyLoggedIn(String username) {
-//		for (String usernameInList : clients.keySet()) {
-//			if (usernameInList.equals(username)) {
-//				return true;
-//			}
-//		}
-//		return false;
-		
 		return clients.containsKey(username);
 	}
 
