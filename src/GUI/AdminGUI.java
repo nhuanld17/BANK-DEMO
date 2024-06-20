@@ -71,6 +71,7 @@ public class AdminGUI extends JFrame {
 	private JLabel[] savingNumber;
 	private JLabel[] dateCreated;
 	private RoundedTextField searchByPayeeNameTextField;
+	private boolean isUserSelected = false;
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -717,6 +718,117 @@ public class AdminGUI extends JFrame {
 			}
 		});
 		reloadUsersPanel.add(reloadUsersButton);
+		
+		JLabel lblNewLabel_3_1 = new JLabel("Edit Info:");
+		lblNewLabel_3_1.setForeground(SystemColor.window);
+		lblNewLabel_3_1.setFont(new Font("Segoe UI", Font.BOLD, 18));
+		lblNewLabel_3_1.setBounds(26, 379, 90, 37);
+		clientMainPanel.add(lblNewLabel_3_1);
+		
+		RoundedTextField editFullNameTF = new RoundedTextField(8, 1, new Color(56, 46, 45));
+		editFullNameTF.setForeground(SystemColor.desktop);
+		editFullNameTF.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+		editFullNameTF.setBorder(null);
+		editFullNameTF.setBounds(155, 431, 289, 34);
+		clientMainPanel.add(editFullNameTF);
+		
+		RoundedTextField editPayeeNameTF = new RoundedTextField(8, 1, new Color(56, 46, 45));
+		editPayeeNameTF.setForeground(SystemColor.desktop);
+		editPayeeNameTF.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+		editPayeeNameTF.setBorder(null);
+		editPayeeNameTF.setBounds(155, 488, 289, 34);
+		clientMainPanel.add(editPayeeNameTF);
+		
+		RoundedTextField editPasswordTF = new RoundedTextField(8, 1, new Color(56, 46, 45));
+		editPasswordTF.setForeground(SystemColor.desktop);
+		editPasswordTF.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+		editPasswordTF.setBorder(null);
+		editPasswordTF.setBounds(155, 542, 289, 34);
+		clientMainPanel.add(editPasswordTF);
+		
+		JLabel lblNewLabel_2_1_2 = new JLabel("Full Name   :");
+		lblNewLabel_2_1_2.setForeground(SystemColor.text);
+		lblNewLabel_2_1_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblNewLabel_2_1_2.setBackground(new Color(157, 157, 157));
+		lblNewLabel_2_1_2.setBounds(26, 432, 117, 31);
+		clientMainPanel.add(lblNewLabel_2_1_2);
+		
+		JLabel lblNewLabel_2_1_2_1 = new JLabel("Payee name :");
+		lblNewLabel_2_1_2_1.setForeground(SystemColor.text);
+		lblNewLabel_2_1_2_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblNewLabel_2_1_2_1.setBackground(new Color(157, 157, 157));
+		lblNewLabel_2_1_2_1.setBounds(26, 489, 117, 31);
+		clientMainPanel.add(lblNewLabel_2_1_2_1);
+		
+		JLabel lblNewLabel_2_1_2_1_1 = new JLabel("Password :");
+		lblNewLabel_2_1_2_1_1.setForeground(SystemColor.text);
+		lblNewLabel_2_1_2_1_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblNewLabel_2_1_2_1_1.setBackground(new Color(157, 157, 157));
+		lblNewLabel_2_1_2_1_1.setBounds(26, 542, 117, 31);
+		clientMainPanel.add(lblNewLabel_2_1_2_1_1);
+		
+		RoundedPanel editPanel_1 = new RoundedPanel(12, 0, new Color(56, 46, 45));
+		editPanel_1.setLayout(null);
+		editPanel_1.setBackground(new Color(44, 34, 30));
+		editPanel_1.setBounds(491, 426, 124, 156);
+		clientMainPanel.add(editPanel_1);
+		
+		RoundedPanel editPanel = new RoundedPanel(12, 2, new Color(199, 199, 199));
+		editPanel.setBounds(10, 11, 104, 39);
+		editPanel_1.add(editPanel);
+		editPanel.setLayout(null);
+		editPanel.setBackground(new Color(200, 100, 0));
+		
+		JButton editButton = new JButton("Edit");
+		editButton.setIcon(new ImageIcon(AdminGUI.class.getResource("/icon/icons8-edit-28.png")));
+		editButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		editButton.setVerticalTextPosition(SwingConstants.TOP);
+		editButton.setIconTextGap(2);
+		editButton.setForeground(SystemColor.text);
+		editButton.setFont(new Font("Segoe UI", Font.BOLD, 18));
+		editButton.setFocusable(false);
+		editButton.setBorder(null);
+		editButton.setBackground(new Color(200, 100, 0));
+		editButton.setBounds(4, 3, 87, 32);
+		editPanel.add(editButton);
+		
+		RoundedPanel saveChangePanel = new RoundedPanel(12, 2, new Color(199, 199, 199));
+		saveChangePanel.setBounds(10, 59, 104, 39);
+		editPanel_1.add(saveChangePanel);
+		saveChangePanel.setLayout(null);
+		saveChangePanel.setBackground(new Color(200, 100, 0));
+		
+		JButton saveChangeButton = new JButton("Save");
+		saveChangeButton.setIcon(new ImageIcon(AdminGUI.class.getResource("/icon/icons8-update-28.png")));
+		saveChangeButton.setVerticalTextPosition(SwingConstants.TOP);
+		saveChangeButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		saveChangeButton.setIconTextGap(2);
+		saveChangeButton.setForeground(SystemColor.text);
+		saveChangeButton.setFont(new Font("Segoe UI", Font.BOLD, 18));
+		saveChangeButton.setFocusable(false);
+		saveChangeButton.setBorder(null);
+		saveChangeButton.setBackground(new Color(200, 100, 0));
+		saveChangeButton.setBounds(4, 3, 86, 32);
+		saveChangePanel.add(saveChangeButton);
+		
+		RoundedPanel saveChangePanel_1 = new RoundedPanel(12, 2, new Color(199, 199, 199));
+		saveChangePanel_1.setBounds(10, 110, 104, 39);
+		editPanel_1.add(saveChangePanel_1);
+		saveChangePanel_1.setLayout(null);
+		saveChangePanel_1.setBackground(new Color(200, 100, 0));
+		
+		JButton deleteButton = new JButton("Delete");
+		deleteButton.setIcon(new ImageIcon(AdminGUI.class.getResource("/icon/icons8-delete-28.png")));
+		deleteButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		deleteButton.setVerticalTextPosition(SwingConstants.TOP);
+		deleteButton.setIconTextGap(2);
+		deleteButton.setForeground(SystemColor.text);
+		deleteButton.setFont(new Font("Segoe UI", Font.BOLD, 18));
+		deleteButton.setFocusable(false);
+		deleteButton.setBorder(null);
+		deleteButton.setBackground(new Color(200, 100, 0));
+		deleteButton.setBounds(4, 3, 87, 32);
+		saveChangePanel_1.add(deleteButton);
 		
 		
 		
