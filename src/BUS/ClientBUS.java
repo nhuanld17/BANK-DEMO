@@ -22,4 +22,12 @@ public class ClientBUS {
 		return new ClientDAO().searchClientByPayeeName(payeeName);
 	}
 
+	public void updateClientInfo(String newFullName, String newEmail, String newPayeeName, String oldPayeeName) {
+		new ClientDAO().updateClientInfo(newFullName, newEmail, newPayeeName, oldPayeeName);
+	}
+
+	public void deleteClient(String payeeName) {
+		new ClientDAO().deleteClient(payeeName);
+	}
+
 }

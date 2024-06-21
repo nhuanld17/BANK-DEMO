@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -72,6 +73,13 @@ public class AdminGUI extends JFrame {
 	private JLabel[] dateCreated;
 	private RoundedTextField searchByPayeeNameTextField;
 	private boolean isUserSelected = false;
+	private String payeenameSelected;
+	private String fullNameSelected;
+	private String emailSelected;
+	private RoundedTextField editFullNameTF;
+	private RoundedTextField editPayeeNameTF;
+	private RoundedTextField editEmailTF;
+	
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -524,6 +532,7 @@ public class AdminGUI extends JFrame {
 							listUserPanel.removeAll();
 							listUserPanel.revalidate();
 							listUserPanel.repaint();
+							continue;
 						}
 						// Tách chuỗi user thành từng user có các info nối nhau bằng _
 						String[] users = str.split("__");
@@ -603,6 +612,7 @@ public class AdminGUI extends JFrame {
 		searchUserButton.setBounds(4, 3, 121, 32);
 		searchUserButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				isUserSelected = false;
 				search();
 			}
 		});
@@ -713,8 +723,10 @@ public class AdminGUI extends JFrame {
 		reloadUsersButton.setBounds(4, 3, 77, 32);
 		reloadUsersButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				isUserSelected = false;
 				AdminGUI.this.writer.println("GET_ALL_USERS");
 				searchByPayeeNameTextField.setText("");
+				
 			}
 		});
 		reloadUsersPanel.add(reloadUsersButton);
@@ -725,26 +737,26 @@ public class AdminGUI extends JFrame {
 		lblNewLabel_3_1.setBounds(26, 379, 90, 37);
 		clientMainPanel.add(lblNewLabel_3_1);
 		
-		RoundedTextField editFullNameTF = new RoundedTextField(8, 1, new Color(56, 46, 45));
+		editFullNameTF = new RoundedTextField(8, 1, new Color(56, 46, 45));
 		editFullNameTF.setForeground(SystemColor.desktop);
 		editFullNameTF.setFont(new Font("Segoe UI", Font.PLAIN, 18));
 		editFullNameTF.setBorder(null);
 		editFullNameTF.setBounds(155, 431, 289, 34);
 		clientMainPanel.add(editFullNameTF);
 		
-		RoundedTextField editPayeeNameTF = new RoundedTextField(8, 1, new Color(56, 46, 45));
+		editPayeeNameTF = new RoundedTextField(8, 1, new Color(56, 46, 45));
 		editPayeeNameTF.setForeground(SystemColor.desktop);
 		editPayeeNameTF.setFont(new Font("Segoe UI", Font.PLAIN, 18));
 		editPayeeNameTF.setBorder(null);
 		editPayeeNameTF.setBounds(155, 488, 289, 34);
 		clientMainPanel.add(editPayeeNameTF);
 		
-		RoundedTextField editPasswordTF = new RoundedTextField(8, 1, new Color(56, 46, 45));
-		editPasswordTF.setForeground(SystemColor.desktop);
-		editPasswordTF.setFont(new Font("Segoe UI", Font.PLAIN, 18));
-		editPasswordTF.setBorder(null);
-		editPasswordTF.setBounds(155, 542, 289, 34);
-		clientMainPanel.add(editPasswordTF);
+		editEmailTF = new RoundedTextField(8, 1, new Color(56, 46, 45));
+		editEmailTF.setForeground(SystemColor.desktop);
+		editEmailTF.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+		editEmailTF.setBorder(null);
+		editEmailTF.setBounds(155, 542, 289, 34);
+		clientMainPanel.add(editEmailTF);
 		
 		JLabel lblNewLabel_2_1_2 = new JLabel("Full Name   :");
 		lblNewLabel_2_1_2.setForeground(SystemColor.text);
@@ -760,7 +772,7 @@ public class AdminGUI extends JFrame {
 		lblNewLabel_2_1_2_1.setBounds(26, 489, 117, 31);
 		clientMainPanel.add(lblNewLabel_2_1_2_1);
 		
-		JLabel lblNewLabel_2_1_2_1_1 = new JLabel("Password :");
+		JLabel lblNewLabel_2_1_2_1_1 = new JLabel("Email :");
 		lblNewLabel_2_1_2_1_1.setForeground(SystemColor.text);
 		lblNewLabel_2_1_2_1_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		lblNewLabel_2_1_2_1_1.setBackground(new Color(157, 157, 157));
@@ -789,7 +801,12 @@ public class AdminGUI extends JFrame {
 		editButton.setFocusable(false);
 		editButton.setBorder(null);
 		editButton.setBackground(new Color(200, 100, 0));
-		editButton.setBounds(4, 3, 87, 32);
+		editButton.setBounds(4, 3, 96, 32);
+		editButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				editClientInfo();
+			}
+		});
 		editPanel.add(editButton);
 		
 		RoundedPanel saveChangePanel = new RoundedPanel(12, 2, new Color(199, 199, 199));
@@ -808,7 +825,12 @@ public class AdminGUI extends JFrame {
 		saveChangeButton.setFocusable(false);
 		saveChangeButton.setBorder(null);
 		saveChangeButton.setBackground(new Color(200, 100, 0));
-		saveChangeButton.setBounds(4, 3, 86, 32);
+		saveChangeButton.setBounds(4, 3, 95, 32);
+		saveChangeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				saveChange();
+			}
+		});
 		saveChangePanel.add(saveChangeButton);
 		
 		RoundedPanel saveChangePanel_1 = new RoundedPanel(12, 2, new Color(199, 199, 199));
@@ -827,7 +849,12 @@ public class AdminGUI extends JFrame {
 		deleteButton.setFocusable(false);
 		deleteButton.setBorder(null);
 		deleteButton.setBackground(new Color(200, 100, 0));
-		deleteButton.setBounds(4, 3, 87, 32);
+		deleteButton.setBounds(4, 3, 95, 32);
+		deleteButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				deleteClient();
+			}
+		});
 		saveChangePanel_1.add(deleteButton);
 		
 		
@@ -839,6 +866,57 @@ public class AdminGUI extends JFrame {
 	}
 
 
+	protected void deleteClient() {
+		if (!isUserSelected) {
+			JOptionPane.showMessageDialog(null, "Please select a client to delete");
+			return;
+		}
+		
+		this.writer.println("DELETE_CLIENT:"+payeenameSelected);
+	}
+
+	protected void saveChange() {
+		String newFullName = editFullNameTF.getText().trim();
+		String newPayeeName = editPayeeNameTF.getText().trim();
+		String newEmail = editEmailTF.getText().trim();
+		
+		if (newFullName.isBlank() || newPayeeName.isBlank() || newEmail.isBlank()) {
+			JOptionPane.showMessageDialog(null, "Please enter complete information");
+			return;
+		}
+		
+		if (!newEmail.matches(emailRegex)) {
+			JOptionPane.showMessageDialog(null, "New Email address is invalid");
+			return;
+		}
+		
+		if (!isUserSelected) {
+			JOptionPane.showMessageDialog(null, "Please select a client to save change info");
+			return;
+		}
+		isUserSelected = false;
+		this.writer.println("UPDATECLIENT:"+newFullName+"_"+newEmail+"_"+newPayeeName+"_"+payeenameSelected);
+		JOptionPane.showMessageDialog(null, "Update client info successfully");
+		setEditFormEmpty();
+	}
+
+	private void setEditFormEmpty() {
+		editEmailTF.setText(null);
+		editFullNameTF.setText(null);
+		editPayeeNameTF.setText(null);
+	}
+
+	protected void editClientInfo() {
+		if (!isUserSelected) {
+			JOptionPane.showMessageDialog(null, "Please choose a client to edit info ");
+			return;
+		}
+		
+		editFullNameTF.setText(fullNameSelected);
+		editEmailTF.setText(emailSelected);
+		editPayeeNameTF.setText(payeenameSelected);
+	}
+
 	protected void search() {
 		String payeename = searchByPayeeNameTextField.getText().trim();
 		
@@ -846,17 +924,11 @@ public class AdminGUI extends JFrame {
 			JOptionPane.showMessageDialog(null, "Please enter complete information in the search box");
 			return;
 		}
-		
+		isUserSelected = false;
 		this.writer.println("SEARCH:"+payeename);
 	}
 
 	private void addUserItem() {
-//		try {
-//			Thread.sleep(1000);
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 		if (userInfoArrayList.isEmpty()) {
 			listUserPanel.removeAll();
 			System.out.println("Kết quả tìm kiếm rỗng");
@@ -885,11 +957,23 @@ public class AdminGUI extends JFrame {
 		int x = 10, y = 10, width = 760, height = 48;
 		
 		for (int i = 0; i < userInfoArrayList.size(); i++) {
+			final int index = i;
+			
 			item[i] = new RoundedPanel(12, 0, Color.gray);
 			item[i].setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			item[i].setBackground(new Color(202, 202, 202));
 			item[i].setBounds(x, y, width, height);
 			item[i].setLayout(null);
+			item[i].addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					fullNameSelected = userInfoArrayList.get(index)[0];
+					payeenameSelected = userInfoArrayList.get(index)[1];
+					emailSelected = userInfoArrayList.get(index)[5];
+	            	isUserSelected = true;
+					printInfoSelected(fullNameSelected, payeenameSelected, emailSelected);
+				}
+			});
 
 			y += height + 10;
 			
@@ -982,6 +1066,10 @@ public class AdminGUI extends JFrame {
 		addActionListerForItem(item);
 	}
 
+	protected void printInfoSelected(String fullNameSelected, String payeenameSelected, String emailSelected) {
+		System.out.println("User selected ?: "+isUserSelected+", "+fullNameSelected+", "+payeenameSelected+", "+emailSelected);
+	}
+
 	private void addActionListerForItem(RoundedPanel[] items) {
 		for (RoundedPanel item : items) {
 			item.addMouseListener(new MouseAdapter() {
@@ -989,7 +1077,6 @@ public class AdminGUI extends JFrame {
 	            public void mouseClicked(MouseEvent e) {
 	            	// Khi nhấn chuột thì đổi màu nền
 	            	item.setBackground(new Color(250, 144, 24));
-	            	
 	            	// Thiết lập màu mặc định cho các Panel còn lại
 	            	for (RoundedPanel remainItem : items) {
 						if (remainItem != item) {

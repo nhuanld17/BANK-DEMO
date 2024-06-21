@@ -40,10 +40,10 @@ public class ClientDAO {
 		}
 		return new ArrayList<>();
 	}
-
+	// TEST: Lấy thêm gmail
 	public String getUserList() {
 		String result = "";
-		String query = "SELECT fullname, payee_name, checkingaccount.accountnumber, savingaccount.accountnumber, date_created "
+		String query = "SELECT fullname, payee_name, checkingaccount.accountnumber, savingaccount.accountnumber, date_created, email"
 				+ " FROM clients INNER JOIN checkingaccount ON clients.payee_name = checkingaccount.owner "
 				+ " INNER JOIN savingaccount ON clients.payee_name = savingaccount.owner";
 		try {
@@ -54,8 +54,9 @@ public class ClientDAO {
 				int checkingAccountNumber = resultSet.getInt("checkingaccount.accountnumber");
 				int savingAccountNumber = resultSet.getInt("savingaccount.accountnumber");
 				Date dateCreated = resultSet.getDate("date_created");
+				String email = resultSet.getString("email");
 				
-				result += fullname+"_"+payeename+"_"+checkingAccountNumber+"_"+savingAccountNumber+"_"+dateCreated+"__";
+				result += fullname+"_"+payeename+"_"+checkingAccountNumber+"_"+savingAccountNumber+"_"+dateCreated+"_"+email+"__";
 			}
 			
 			return result;
@@ -94,4 +95,25 @@ public class ClientDAO {
 		return users;
 	}
 
+	public void updateClientInfo(String newFullName, String newEmail, String newPayeeName, String oldPayeeName) {
+		String query = "UPDATE fk_bank.clients SET payee_name = '"+newPayeeName+"', fullname = '"+newFullName+"', "
+				+ " email = '"+newEmail+"'"
+				+ " WHERE payee_name = '"+oldPayeeName+"'";
+		try {
+			new DBcon().updateDB(query);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void deleteClient(String payeeName) {
+		String query = "DELETE FROM fk_bank.clients WHERE payee_name = '"+payeeName+"'";
+		try {
+			new DBcon().updateDB(query);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

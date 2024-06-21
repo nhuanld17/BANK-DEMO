@@ -73,6 +73,23 @@ public class ClientHandler extends Thread{
 				} else if (message.equals("GET_ALL_USERS")) {
 					sendListPayeeName();
 					sendListUser();
+				} else if (message.startsWith("UPDATECLIENT:")) {
+					String infoStr = message.substring(13);
+					String[] infos = infoStr.split("_");
+					String newFullName = infos[0];
+					String newEmail = infos[1];
+					String newPayeeName = infos[2];
+					String oldPayeeName = infos[3];
+					
+					new ClientBUS().updateClientInfo(newFullName, newEmail, newPayeeName, oldPayeeName);
+					sendListPayeeName();
+					sendListUser();
+				} else if (message.startsWith("DELETE_CLIENT:")) {
+					String payeeName = message.substring(14);
+					
+					new ClientBUS().deleteClient(payeeName);
+					sendListPayeeName();
+					sendListUser();
 				}
 			}
 		} catch (Exception e) {
