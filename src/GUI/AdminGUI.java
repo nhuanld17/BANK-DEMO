@@ -11,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -64,8 +63,10 @@ public class AdminGUI extends JFrame {
 	private String emailRegex = "(?i)[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}";
 	private ArrayList payeeList;
 	private ArrayList<String[]> userInfoArrayList = new ArrayList<String[]>();
+	private ArrayList<String[]> userInfoArrayList2 = new ArrayList<String[]>();
 	private RoundedPanel clientMainPanel;
-	private JPanel listUserPanel = new JPanel();;
+	private JPanel listUserPanel = new JPanel();
+	private JPanel listUserPanel2 = new JPanel();
 	private JLabel[] username;
 	private JLabel[] payeename;
 	private JLabel[] checkingNumber;
@@ -73,12 +74,19 @@ public class AdminGUI extends JFrame {
 	private JLabel[] dateCreated;
 	private RoundedTextField searchByPayeeNameTextField;
 	private boolean isUserSelected = false;
+	private boolean isUserSelected2 = false;
 	private String payeenameSelected;
 	private String fullNameSelected;
 	private String emailSelected;
+	private String payeenameSelected2;
+	private String fullNameSelected2;
+	private String emailSelected2;
 	private RoundedTextField editFullNameTF;
 	private RoundedTextField editPayeeNameTF;
 	private RoundedTextField editEmailTF;
+	private RoundedTextField searchByPayeeNameTextField1;
+	private RoundedTextField transferCheckingAmountTF;
+	private RoundedTextField transferSavingAmountTF;
 	
 	
 	public static void main(String[] args) {
@@ -505,16 +513,20 @@ public class AdminGUI extends JFrame {
 //						System.out.println(listUser);
 						String[] users = listUser.split("__");
 						userInfoArrayList.clear();
+						userInfoArrayList2.clear();
 						for (String user : users) {
 							String[] userInfo = user.split("_");
 							userInfoArrayList.add(userInfo);
+							userInfoArrayList2.add(userInfo);
 						}
+
 						
 					    try {
 							SwingUtilities.invokeAndWait(new Runnable() {
 							    public void run() {
 							        // Mã thao tác trên giao diện người dùng ở đây
 							    	addUserItem();
+							    	addUserItemInTransactiontab();
 							    }
 							});
 						} catch (InvocationTargetException e1) {
@@ -553,7 +565,38 @@ public class AdminGUI extends JFrame {
 						} catch (InterruptedException e1) {
 							e1.printStackTrace();
 						}
+					}
+					
+					if (message.startsWith("SEARCHINTRANSACTION:")) {
+						String str = message.substring(20);
+						if (str.isBlank()) {
+							listUserPanel2.removeAll();
+							listUserPanel2.revalidate();
+							listUserPanel2.repaint();
+							continue;
+						}
 						
+						// Tách chuỗi user thành từng user có các info nối nhau bằng _
+						String[] users = str.split("__");
+						userInfoArrayList2.clear();
+						for (String user : users) {
+							String[] userInfo = user.split("_");
+							userInfoArrayList2.add(userInfo);
+						}
+						
+					    try {
+							SwingUtilities.invokeAndWait(new Runnable() {
+							    public void run() {
+							    	addUserItemInTransactiontab();
+							    }
+							});
+						} catch (InvocationTargetException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					}
 					
 				}
@@ -624,11 +667,7 @@ public class AdminGUI extends JFrame {
 		listUserPanel.setLayout(null);
 
 //		addUserItem();
-		
 
-		
-
-		
 		// ============= TEST ==============
 		
 		
@@ -859,12 +898,406 @@ public class AdminGUI extends JFrame {
 		
 		
 		
-		JPanel Transaction = new JPanel();
-		Transaction.setBackground(new Color(34, 30, 29));
-		tabbedPane.addTab("Transaction", null, Transaction, null);
-		Transaction.setLayout(null);
+		JPanel TransactionPanel = new JPanel();
+		TransactionPanel.setBackground(new Color(34, 30, 29));
+		tabbedPane.addTab("Transaction", null, TransactionPanel, null);
+		TransactionPanel.setLayout(null);
+		
+		RoundedPanel transacMainPanel = new RoundedPanel(12, 0, new Color(34, 30, 29));
+		transacMainPanel.setBackground(new Color(80, 71, 75));
+		transacMainPanel.setBounds(15, 25, 849, 603);
+		TransactionPanel.add(transacMainPanel);
+		transacMainPanel.setLayout(null);
+		
+		JLabel lblNewLabel_3_2 = new JLabel("Search By Payee Name :");
+		lblNewLabel_3_2.setForeground(SystemColor.window);
+		lblNewLabel_3_2.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+		lblNewLabel_3_2.setBounds(45, 17, 226, 37);
+		transacMainPanel.add(lblNewLabel_3_2);
+		
+		searchByPayeeNameTextField1 = new RoundedTextField(8, 1, new Color(56, 46, 45));
+		searchByPayeeNameTextField1.setForeground(SystemColor.desktop);
+		searchByPayeeNameTextField1.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+		searchByPayeeNameTextField1.setBorder(null);
+		searchByPayeeNameTextField1.setBounds(267, 18, 289, 34);
+		transacMainPanel.add(searchByPayeeNameTextField1);
+		
+		RoundedPanel searchUserPanel1 = new RoundedPanel(12, 3, new Color(199, 199, 199));
+		searchUserPanel1.setLayout(null);
+		searchUserPanel1.setBackground(new Color(250, 144, 24));
+		searchUserPanel1.setBounds(569, 15, 132, 39);
+		transacMainPanel.add(searchUserPanel1);
+		
+		JButton searchUserButton1 = new JButton("Search");
+		searchUserButton1.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		searchUserButton1.setIcon(new ImageIcon(AdminGUI.class.getResource("/icon/icons8-search-30.png")));
+		searchUserButton1.setVerticalTextPosition(SwingConstants.TOP);
+		searchUserButton1.setIconTextGap(2);
+		searchUserButton1.setForeground(SystemColor.desktop);
+		searchUserButton1.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+		searchUserButton1.setFocusable(false);
+		searchUserButton1.setBorder(null);
+		searchUserButton1.setBackground(new Color(250, 144, 24));
+		searchUserButton1.setBounds(4, 3, 121, 32);
+		searchUserButton1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				searchUserInTransaction();
+			}
+		});
+		searchUserPanel1.add(searchUserButton1);
+		
+		RoundedPanel reloadUsersPanel1 = new RoundedPanel(12, 3, new Color(199, 199, 199));
+		reloadUsersPanel1.setLayout(null);
+		reloadUsersPanel1.setBackground(new Color(250, 144, 24));
+		reloadUsersPanel1.setBounds(711, 15, 85, 39);
+		transacMainPanel.add(reloadUsersPanel1);
+		
+		JButton reloadUsersButton1 = new JButton("");
+		reloadUsersButton1.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		reloadUsersButton1.setIcon(new ImageIcon(AdminGUI.class.getResource("/icon/icons8-reload-30.png")));
+		reloadUsersButton1.setVerticalTextPosition(SwingConstants.TOP);
+		reloadUsersButton1.setVerticalAlignment(SwingConstants.TOP);
+		reloadUsersButton1.setIconTextGap(2);
+		reloadUsersButton1.setForeground(SystemColor.desktop);
+		reloadUsersButton1.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+		reloadUsersButton1.setFocusable(false);
+		reloadUsersButton1.setBorder(null);
+		reloadUsersButton1.setBackground(new Color(250, 144, 24));
+		reloadUsersButton1.setBounds(4, 3, 77, 32);
+		reloadUsersButton1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				isUserSelected2 = false;
+				AdminGUI.this.writer.println("GET_ALL_USERS");
+				searchByPayeeNameTextField1.setText("");
+			}
+		});
+		reloadUsersPanel1.add(reloadUsersButton1);
+		
+		listUserPanel2.setBackground(new Color(28, 27, 28));
+		listUserPanel2.setBounds(34, 65, 781, 303);
+		listUserPanel2.setLayout(null);
+		
+		JScrollPane listUserScrollPane2 = new JScrollPane(listUserPanel2);
+		listUserScrollPane2.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+		listUserScrollPane2.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		listUserScrollPane2.getVerticalScrollBar().setUnitIncrement(16);
+		listUserScrollPane2.setBorder(null);
+		listUserScrollPane2.setBounds(34, 65, 781, 303);
+		transacMainPanel.add(listUserScrollPane2);
+		
+		JLabel lblNewLabel_3_2_1 = new JLabel("*** Transaction");
+		lblNewLabel_3_2_1.setForeground(SystemColor.window);
+		lblNewLabel_3_2_1.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+		lblNewLabel_3_2_1.setBounds(34, 379, 170, 31);
+		transacMainPanel.add(lblNewLabel_3_2_1);
+		
+		JLabel lblNewLabel_4 = new JLabel("Transfer money to checking account");
+		lblNewLabel_4.setVerticalAlignment(SwingConstants.BOTTOM);
+		lblNewLabel_4.setFont(new Font("Calibri", Font.PLAIN, 20));
+		lblNewLabel_4.setForeground(SystemColor.desktop);
+		lblNewLabel_4.setBounds(34, 410, 316, 31);
+		transacMainPanel.add(lblNewLabel_4);
+		
+		JLabel lblNewLabel_3_2_1_1 = new JLabel("Amount of money :");
+		lblNewLabel_3_2_1_1.setForeground(SystemColor.window);
+		lblNewLabel_3_2_1_1.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+		lblNewLabel_3_2_1_1.setBounds(34, 452, 170, 31);
+		transacMainPanel.add(lblNewLabel_3_2_1_1);
+		
+		transferCheckingAmountTF = new RoundedTextField(8, 1, new Color(56, 46, 45));
+		transferCheckingAmountTF.setForeground(SystemColor.desktop);
+		transferCheckingAmountTF.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+		transferCheckingAmountTF.setBorder(null);
+		transferCheckingAmountTF.setBounds(217, 452, 289, 34);
+		transacMainPanel.add(transferCheckingAmountTF);
+		
+		RoundedPanel saveChangePanel_2 = new RoundedPanel(12, 2, new Color(199, 199, 199));
+		saveChangePanel_2.setLayout(null);
+		saveChangePanel_2.setBackground(new Color(200, 100, 0));
+		saveChangePanel_2.setBounds(529, 449, 126, 39);
+		transacMainPanel.add(saveChangePanel_2);
+		
+		JButton transferCheckingButton = new JButton("Transfer");
+		transferCheckingButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				transferMoneyToCheckingAccount();
+			}
+		});
+		transferCheckingButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		transferCheckingButton.setVerticalAlignment(SwingConstants.TOP);
+		transferCheckingButton.setIconTextGap(2);
+		transferCheckingButton.setForeground(SystemColor.text);
+		transferCheckingButton.setFont(new Font("Segoe UI", Font.BOLD, 18));
+		transferCheckingButton.setFocusable(false);
+		transferCheckingButton.setBorder(null);
+		transferCheckingButton.setBackground(new Color(200, 100, 0));
+		transferCheckingButton.setBounds(4, 3, 118, 32);
+		saveChangePanel_2.add(transferCheckingButton);
+		
+		RoundedPanel saveChangePanel_2_1 = new RoundedPanel(12, 2, new Color(199, 199, 199));
+		saveChangePanel_2_1.setLayout(null);
+		saveChangePanel_2_1.setBackground(new Color(200, 100, 0));
+		saveChangePanel_2_1.setBounds(529, 542, 126, 39);
+		transacMainPanel.add(saveChangePanel_2_1);
+		
+		JButton transferSavingButton = new JButton("Transfer");
+		transferSavingButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				transferMoneyToSavingAccount();
+			}
+		});
+		transferSavingButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		transferSavingButton.setVerticalAlignment(SwingConstants.TOP);
+		transferSavingButton.setIconTextGap(2);
+		transferSavingButton.setForeground(SystemColor.text);
+		transferSavingButton.setFont(new Font("Segoe UI", Font.BOLD, 18));
+		transferSavingButton.setFocusable(false);
+		transferSavingButton.setBorder(null);
+		transferSavingButton.setBackground(new Color(200, 100, 0));
+		transferSavingButton.setBounds(4, 3, 118, 32);
+		saveChangePanel_2_1.add(transferSavingButton);
+		
+		transferSavingAmountTF = new RoundedTextField(8, 1, new Color(56, 46, 45));
+		transferSavingAmountTF.setForeground(SystemColor.desktop);
+		transferSavingAmountTF.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+		transferSavingAmountTF.setBorder(null);
+		transferSavingAmountTF.setBounds(217, 545, 289, 34);
+		transacMainPanel.add(transferSavingAmountTF);
+		
+		JLabel lblNewLabel_3_2_1_1_1 = new JLabel("Amount of money :");
+		lblNewLabel_3_2_1_1_1.setForeground(SystemColor.window);
+		lblNewLabel_3_2_1_1_1.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+		lblNewLabel_3_2_1_1_1.setBounds(34, 545, 170, 31);
+		transacMainPanel.add(lblNewLabel_3_2_1_1_1);
+		
+		JLabel lblNewLabel_4_1 = new JLabel("Transfer money to checking account");
+		lblNewLabel_4_1.setVerticalAlignment(SwingConstants.BOTTOM);
+		lblNewLabel_4_1.setForeground(SystemColor.desktop);
+		lblNewLabel_4_1.setFont(new Font("Calibri", Font.PLAIN, 20));
+		lblNewLabel_4_1.setBounds(34, 503, 316, 31);
+		transacMainPanel.add(lblNewLabel_4_1);
 	}
 
+
+	protected void transferMoneyToSavingAccount() {
+		String moneyString = transferSavingAmountTF.getText().trim();
+		
+		if (moneyString.isBlank()) {
+			JOptionPane.showMessageDialog(null, "Please enter the amount to transfer");
+			return;
+		}
+		
+		if (!isUserSelected2) {
+			JOptionPane.showMessageDialog(null, "Please select a client to transfer money");
+			return;
+		}
+		
+		double moneyDouble = 0;
+		String payeeName = payeenameSelected2;
+		
+		try {
+			moneyDouble = Double.valueOf(moneyString);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "String in textfield is invalid");
+			return;
+		}
+		
+		if (moneyDouble == 0) {
+			JOptionPane.showMessageDialog(null, "Transfer successfully");
+			return;
+		}
+		
+		if (moneyDouble < 0) {
+			JOptionPane.showMessageDialog(null, "The amount of money can not be less than 0");
+			return;
+		}
+		
+		this.writer.println("TRANSFER_SAVING:"+payeeName+"_"+moneyDouble);
+		JOptionPane.showMessageDialog(null, "Transfer successfully");
+	}
+
+	protected void transferMoneyToCheckingAccount() {
+		String moneyString = transferCheckingAmountTF.getText().trim();
+		
+		if (moneyString.isBlank()) {
+			JOptionPane.showMessageDialog(null, "Please enter the amount to transfer");
+			return;
+		}
+		
+		if (!isUserSelected2) {
+			JOptionPane.showMessageDialog(null, "Please select a client to transfer money");
+			return;
+		}
+		
+		double moneyDouble = 0;
+		String payeeName = payeenameSelected2;
+		
+		try {
+			moneyDouble = Double.valueOf(moneyString);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "String in textfield is invalid");
+			return;
+		}
+		
+		if (moneyDouble == 0) {
+			JOptionPane.showMessageDialog(null, "Transfer successfully");
+			return;
+		}
+		
+		if (moneyDouble < 0) {
+			JOptionPane.showMessageDialog(null, "The amount of money can not be less than 0");
+			return;
+		}
+		
+		this.writer.println("TRANSFER_CHECKING:"+payeeName+"_"+moneyDouble);
+		JOptionPane.showMessageDialog(null, "Transfer successfully");
+	}
+
+	protected void addUserItemInTransactiontab() {
+		// In kiểm tra danh sách thông tin người dùng
+		for (String[] users : userInfoArrayList2) {
+			for (String info : users) {
+				System.out.print(info+" ");
+			}
+			System.out.println();
+		}
+		
+		listUserPanel2.removeAll();
+		
+		RoundedPanel[] item = new RoundedPanel[userInfoArrayList2.size()];
+		JLabel[] username2 = new JLabel[userInfoArrayList2.size()];
+		JLabel[] payeename2 = new JLabel[userInfoArrayList2.size()];
+		JLabel[] checkingNumber2 = new JLabel[userInfoArrayList2.size()];
+		JLabel[] savingNumber2 = new JLabel[userInfoArrayList2.size()];
+		JLabel[] dateCreated2 = new JLabel[userInfoArrayList2.size()];
+		
+		int x = 10, y = 10, width = 760, height = 48;
+		
+		for (int i = 0; i < userInfoArrayList2.size(); i++) {
+			final int index = i;
+			
+			item[i] = new RoundedPanel(12, 0, Color.gray);
+			item[i].setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+			item[i].setBackground(new Color(202, 202, 202));
+			item[i].setBounds(x, y, width, height);
+			item[i].setLayout(null);
+			item[i].addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					fullNameSelected2 = userInfoArrayList2.get(index)[0];
+					payeenameSelected2 = userInfoArrayList2.get(index)[1];
+					emailSelected2 = userInfoArrayList2.get(index)[5];
+	            	isUserSelected2 = true;
+					printInfoSelectedInTransaction(fullNameSelected2, payeenameSelected2, emailSelected2);
+				}
+			});
+
+			y += height + 10;
+			
+			// Tạo label chứa icon
+			JLabel iconLabel = new JLabel("");
+			iconLabel.setBounds(0, 0, 35, 48);
+			iconLabel.setIcon(new ImageIcon(AdminGUI.class.getResource("/icon/icons8-user-35.png")));
+			iconLabel.setHorizontalAlignment(SwingConstants.CENTER);
+			item[i].add(iconLabel);
+			
+			// Label chứa tên người dùng
+			username2[i] = new JLabel();
+			username2[i].setText(userInfoArrayList2.get(i)[0]);
+			username2[i].setForeground(new Color(17, 29, 34));
+			username2[i].setHorizontalAlignment(SwingConstants.LEFT);
+			username2[i].setFont(new Font("Calibri", Font.BOLD, 20));
+			username2[i].setToolTipText(userInfoArrayList2.get(i)[0]);
+			username2[i].setBounds(35, 13, 178, 26);
+			item[i].add(username2[i]);
+			
+			// Tạo JSeperator 
+			JSeparator separator1 = new JSeparator();
+			separator1.setOrientation(SwingConstants.VERTICAL);
+			separator1.setBackground(new Color(28, 27, 28));
+			separator1.setForeground(new Color(28, 27, 28));
+			separator1.setBounds(215, 5, 1, 37);
+			item[i].add(separator1);
+			
+			// Tạo JLabel cho payeename
+			payeename2[i] = new JLabel();
+			payeename2[i].setText(userInfoArrayList2.get(i)[1]);
+			payeename2[i].setHorizontalAlignment(SwingConstants.LEFT);
+			payeename2[i].setForeground(new Color(85, 104, 17));
+			payeename2[i].setFont(new Font("Calibri", Font.BOLD, 20));
+			payeename2[i].setBounds(225, 13, 139, 26);
+			item[i].add(payeename2[i]);
+			
+			// Tạo JSeperator
+			JSeparator separator2 = new JSeparator();
+			separator2.setOrientation(SwingConstants.VERTICAL);
+			separator2.setForeground(new Color(28, 27, 28));
+			separator2.setBackground(new Color(28, 27, 28));
+			separator2.setBounds(380, 5, 1, 37);
+			item[i].add(separator2);
+			
+			// Tạo JLabel cho số tài khoản thanh toán
+			checkingNumber2[i] = new JLabel();
+			checkingNumber2[i].setText(userInfoArrayList2.get(i)[2]);
+			checkingNumber2[i].setHorizontalAlignment(SwingConstants.LEFT);
+			checkingNumber2[i].setForeground(new Color(202, 101, 0));
+			checkingNumber2[i].setForeground(new Color(139, 0, 0));
+			checkingNumber2[i].setFont(new Font("Calibri", Font.BOLD, 20));
+			checkingNumber2[i].setBounds(386, 13, 93, 26);
+			item[i].add(checkingNumber2[i]);
+			
+			// Tạo JLabel cho số tài khoản tiết kiệm
+			savingNumber2[i] = new JLabel();
+			savingNumber2[i].setText(userInfoArrayList2.get(i)[3]);
+			savingNumber2[i].setHorizontalAlignment(SwingConstants.RIGHT);
+			savingNumber2[i].setForeground(new Color(17, 29, 34));
+			savingNumber2[i].setFont(new Font("Calibri", Font.BOLD, 20));
+			savingNumber2[i].setBounds(510, 13, 93, 26);
+			item[i].add(savingNumber2[i]);
+			
+			// Tạo JSeperator
+			JSeparator separator3 = new JSeparator();
+			separator3.setOrientation(SwingConstants.VERTICAL);
+			separator3.setForeground(new Color(28, 27, 28));
+			separator3.setBackground(new Color(28, 27, 28));
+			separator3.setBounds(614, 5, 1, 37);
+			item[i].add(separator3);
+			
+			// Tạo JLabel cho ngày tạo tk
+			dateCreated2[i] = new JLabel();
+			dateCreated2[i].setText(userInfoArrayList2.get(i)[4]);
+			dateCreated2[i].setHorizontalAlignment(SwingConstants.CENTER);
+			dateCreated2[i].setForeground(new Color(17, 29, 34));
+			dateCreated2[i].setFont(new Font("Calibri", Font.BOLD, 20));
+			dateCreated2[i].setBounds(625, 13, 125, 26);
+			item[i].add(dateCreated2[i]);
+			
+			listUserPanel2.add(item[i]);
+			listUserPanel2.revalidate();
+			listUserPanel2.repaint();
+		}
+		int size = userInfoArrayList2.size();
+		listUserPanel2.setPreferredSize(new Dimension(781, (10 + size*height + (size-1)*10 + 10)));
+		
+		// Thêm ActionLister cho item[], khi nhấn chọn vào
+		addActionListerForItem(item);
+	}
+
+	protected void printInfoSelectedInTransaction(String fullNameSelected3, String payeenameSelected3,
+			String emailSelected3) {
+		System.out.println("Is User selected: "+isUserSelected2+", "+fullNameSelected3+", "+payeenameSelected3+", "+emailSelected3);
+	}
+
+	protected void searchUserInTransaction() {
+		String payeeAddress = searchByPayeeNameTextField1.getText().trim();
+		
+		if (payeeAddress.isBlank()) {
+			JOptionPane.showMessageDialog(null, "Fill in the search box");
+			return;
+		}
+		
+		this.writer.println("SEARCH_IN_TRANSACTION:"+payeeAddress);
+	}
 
 	protected void deleteClient() {
 		if (!isUserSelected) {
@@ -929,11 +1362,11 @@ public class AdminGUI extends JFrame {
 	}
 
 	private void addUserItem() {
-		if (userInfoArrayList.isEmpty()) {
-			listUserPanel.removeAll();
-			System.out.println("Kết quả tìm kiếm rỗng");
-			return;
-		}
+//		if (userInfoArrayList.isEmpty()) {
+//			listUserPanel.removeAll();
+//			System.out.println("Kết quả tìm kiếm rỗng");
+//			return;
+//		}
 		
 		// In kiểm tra danh sách thông tin người dùng
 		for (String[] users : userInfoArrayList) {

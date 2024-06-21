@@ -69,7 +69,7 @@ public class ClientDAO {
 
 	public String searchClientByPayeeName(String payeeName) {
 		String users = "";
-		String query = "SELECT fullname, payee_name, checkingaccount.accountnumber, savingaccount.accountnumber, date_created "
+		String query = "SELECT fullname, payee_name, checkingaccount.accountnumber, savingaccount.accountnumber, date_created, email"
 				+ " FROM clients INNER JOIN checkingaccount ON clients.payee_name = checkingaccount.owner "
 				+ " INNER JOIN savingaccount ON clients.payee_name = savingaccount.owner"
 				+ " WHERE payee_name LIKE '%"+payeeName+"%'";
@@ -83,8 +83,9 @@ public class ClientDAO {
 				int checkingAccountNumber = resultSet.getInt("checkingaccount.accountnumber");
 				int savingAccountNumber = resultSet.getInt("savingaccount.accountnumber");
 				Date dateCreated = resultSet.getDate("date_created");
+				String email = resultSet.getString("email");
 				
-				users += fullname+"_"+payeename+"_"+checkingAccountNumber+"_"+savingAccountNumber+"_"+dateCreated+"__";
+				users += fullname+"_"+payeename+"_"+checkingAccountNumber+"_"+savingAccountNumber+"_"+dateCreated+"_"+email+"__";
 			}
 			
 			return users;

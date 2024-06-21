@@ -90,6 +90,29 @@ public class ClientHandler extends Thread{
 					new ClientBUS().deleteClient(payeeName);
 					sendListPayeeName();
 					sendListUser();
+				} else if (message.startsWith("SEARCH_IN_TRANSACTION:")) {
+					System.out.println(message);
+					String payeeName = message.substring(22);
+					
+					String users ="SEARCHINTRANSACTION:" + new ClientBUS().searchClientByPayeeName(payeeName);
+					System.out.println("Kết quả tìm kiếm: "+users);
+					this.writer.println(users);
+				} else if (message.startsWith("TRANSFER_CHECKING:")) {
+					String info = message.substring(18);
+					String[] infos = info.split("_");
+					String payeeName = infos[0];
+					double amount = Double.valueOf(infos[1]);
+					
+					new CheckingAccountBUS().adminTransferToCheckingAcc(payeeName, amount);
+					
+					// Gửi tin nhắn cho client để cập nhật
+				} else if (message.startsWith("TRANSFER_SAVING:")) {
+					String info = message.substring(16);
+					String[] infos = info.split("_");
+					String payeeName = infos[0];
+					double amount = Double.valueOf(infos[1]);
+					
+					new SavingAccountBUS().adminTransferToSavingAccount(payeeName, amount);
 				}
 			}
 		} catch (Exception e) {

@@ -8,4 +8,8 @@ public class SavingAccountBUS {
 		new SavingAccountDAO().createSavingAccount(payeeAddress, savingInit);
 	}
 
+	public void adminTransferToSavingAccount(String payeeName, double amount) {
+		new SavingAccountDAO().adminTransferToSavingAccount(payeeName, amount);
+	}
+
 }

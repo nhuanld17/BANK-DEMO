@@ -1,5 +1,7 @@
 package DAO;
 
+import java.sql.ResultSet;
+
 public class SavingAccountDAO {
 
 	public void createSavingAccount(String payeeAddress, double savingInit) {
@@ -11,5 +13,35 @@ public class SavingAccountDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public void adminTransferToSavingAccount(String payeeName, double amount) {
+		double currentSavingBalance = getCurrentSavingBalance(payeeName);
+		currentSavingBalance += amount;
+		
+		String query = "UPDATE fk_bank.savingaccount SET balance = '"+currentSavingBalance+"' WHERE owner = '"+payeeName+"'";
+		try {
+			new DBcon().updateDB(query);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private double getCurrentSavingBalance(String payeeName) {
+		double currentBalance = 0;
+		String query = "SELECT balance FROM fk_bank.savingaccount WHERE owner = '"+payeeName+"'";
+		try {
+			ResultSet resultSet = new DBcon().queryDB(query);
+			while (resultSet.next()) {
+				currentBalance = resultSet.getDouble("balance");
+			}
+			
+			return currentBalance;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return currentBalance;
 	}
 }
