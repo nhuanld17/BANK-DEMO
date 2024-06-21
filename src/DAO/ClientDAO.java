@@ -117,4 +117,56 @@ public class ClientDAO {
 			e.printStackTrace();
 		}
 	}
+
+	public boolean checkPayeeAndEmail(String payeename, String email) {
+		String query = "SELECT payee_name FROM fk_bank.clients WHERE payee_name = '"+payeename+"'";
+		
+		try {
+			ResultSet resultSet = new DBcon().queryDB(query);
+			
+			// Nếu payeename tồn tại, kiểm tra email của payeename đó
+			if (resultSet.next()) {
+				String Email = getEmailByPayeeName(payeename);
+				if (Email.equals(email)) {
+					return true;
+				}
+			}
+			
+			return false;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	private String getEmailByPayeeName(String payeename) {
+		String query = "SELECT email FROM fk_bank.clients WHERE payee_name = '"+payeename+"'";
+		String email = null;
+		
+		try {
+			ResultSet resultSet = new DBcon().queryDB(query);
+			if (resultSet.next()) {
+				email = resultSet.getString("email");
+			}
+			
+			return email;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return email;
+	}
+
+	public void updatePass(String payeename, String pass) {
+		String hashedPassword = new HashPassword(pass).getPasswordHashed();
+		String query = "UPDATE fk_bank.clients SET password = '"+hashedPassword+"' WHERE payee_name = '"+payeename+"'";
+		try {
+			new DBcon().updateDB(query);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

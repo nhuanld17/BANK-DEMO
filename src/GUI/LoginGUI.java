@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.Random;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -28,6 +30,7 @@ import javax.swing.border.LineBorder;
 import COMPONENT.RoundedButton;
 import COMPONENT.RoundedPasswordField;
 import COMPONENT.RoundedTextField;
+import SIDEFUNCTION.SendMailOTP;
 
 
 
@@ -41,6 +44,16 @@ public class LoginGUI extends JFrame {
 	private Socket socket;
 	private BufferedReader reader;
 	private PrintWriter writer;
+	private RoundedTextField payeeTextField;
+	private RoundedTextField emailTextField;
+	private RoundedButton sendOTPButton;
+	private RoundedTextField otpTextField;
+	private RoundedButton checkOTPButton;
+	private int randomOTP;
+	private RoundedTextField newPasswordTextField;
+	private RoundedButton updatePasswordButton;
+	private String payeeName;
+	private String email;
 
 	/**
 	 * Launch the application.
@@ -178,6 +191,7 @@ public class LoginGUI extends JFrame {
 		LoginPanel.add(lblNewLabel_3_2);
 		
 		JPanel ResetPassPanel = new JPanel();
+		ResetPassPanel.setForeground(SystemColor.text);
 		ResetPassPanel.setBackground(new Color(238, 238, 238));
 		tabbedPane.addTab("ResetPass", null, ResetPassPanel, null);
 		ResetPassPanel.setLayout(null);
@@ -192,6 +206,229 @@ public class LoginGUI extends JFrame {
 			}
 		});
 		ResetPassPanel.add(logOutButton);
+		
+		JLabel lblNewLabel_2_1 = new JLabel("Password Recovery");
+		lblNewLabel_2_1.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_2_1.setForeground(new Color(17, 29, 34));
+		lblNewLabel_2_1.setFont(new Font("Tahoma", Font.BOLD, 24));
+		lblNewLabel_2_1.setBackground(new Color(50, 48, 49));
+		lblNewLabel_2_1.setBounds(19, 2, 397, 60);
+		ResetPassPanel.add(lblNewLabel_2_1);
+		
+		JLabel lblNewLabel_4 = new JLabel("Your payee name:");
+		lblNewLabel_4.setForeground(new Color(17, 29, 34));
+		lblNewLabel_4.setVerticalAlignment(SwingConstants.BOTTOM);
+		lblNewLabel_4.setFont(new Font("Calibri", Font.BOLD, 20));
+		lblNewLabel_4.setBounds(19, 74, 180, 28);
+		ResetPassPanel.add(lblNewLabel_4);
+		
+		payeeTextField = new RoundedTextField(8, 1, Color.GRAY);
+		payeeTextField.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+		payeeTextField.setForeground(new Color(17, 29, 34));
+		payeeTextField.setBounds(19, 105, 210, 40);
+		ResetPassPanel.add(payeeTextField);
+		
+		JLabel lblNewLabel_4_1 = new JLabel("Your email:");
+		lblNewLabel_4_1.setVerticalAlignment(SwingConstants.BOTTOM);
+		lblNewLabel_4_1.setForeground(new Color(17, 29, 34));
+		lblNewLabel_4_1.setFont(new Font("Calibri", Font.BOLD, 20));
+		lblNewLabel_4_1.setBounds(265, 74, 161, 28);
+		ResetPassPanel.add(lblNewLabel_4_1);
+		
+		emailTextField = new RoundedTextField(8, 1, Color.GRAY);
+		emailTextField.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+		emailTextField.setForeground(new Color(17, 29, 34));
+		emailTextField.setBounds(265, 105, 161, 40);
+		ResetPassPanel.add(emailTextField);
+		
+		sendOTPButton = new RoundedButton("Send OTP code", 12, 2, Color.GRAY);
+		sendOTPButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		sendOTPButton.setFocusable(false);
+		sendOTPButton.setForeground(new Color(238, 238, 238));
+		sendOTPButton.setFont(new Font("Segoe UI", Font.BOLD, 18));
+		sendOTPButton.setBackground(new Color(17, 29, 34));
+		sendOTPButton.setBounds(19, 155, 159, 45);
+		sendOTPButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				sendOTPCode();
+			}
+		});
+		ResetPassPanel.add(sendOTPButton);
+		
+		otpTextField = new RoundedTextField(8, 1, Color.GRAY);
+		otpTextField.setEditable(false);
+		otpTextField.setForeground(new Color(17, 29, 34));
+		otpTextField.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+		otpTextField.setBounds(20, 235, 210, 40);
+		ResetPassPanel.add(otpTextField);
+		
+		checkOTPButton = new RoundedButton("Send OTP code", 12, 2, Color.GRAY);
+		checkOTPButton.setEnabled(false);
+		checkOTPButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		checkOTPButton.setText("Check OTP code");
+		checkOTPButton.setForeground(new Color(238, 238, 238));
+		checkOTPButton.setFont(new Font("Segoe UI", Font.BOLD, 18));
+		checkOTPButton.setFocusable(false);
+		checkOTPButton.setBackground(new Color(17, 29, 34));
+		checkOTPButton.setBounds(268, 232, 159, 45);
+		checkOTPButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String otp = otpTextField.getText();
+				
+				if (!otp.equals(randomOTP+"")) {
+					JOptionPane.showMessageDialog(null, "OTP code is incorect");
+					return;
+				}
+				
+				newPasswordTextField.setEditable(true);
+				updatePasswordButton.setEnabled(true);
+			}
+		});
+		ResetPassPanel.add(checkOTPButton);
+		
+		JLabel lblNewLabel_4_2 = new JLabel("Enter OTP code:");
+		lblNewLabel_4_2.setVerticalAlignment(SwingConstants.BOTTOM);
+		lblNewLabel_4_2.setForeground(new Color(17, 29, 34));
+		lblNewLabel_4_2.setFont(new Font("Calibri", Font.BOLD, 20));
+		lblNewLabel_4_2.setBounds(19, 211, 180, 28);
+		ResetPassPanel.add(lblNewLabel_4_2);
+		
+		JLabel lblNewLabel_4_2_1 = new JLabel("Enter new password:");
+		lblNewLabel_4_2_1.setVerticalAlignment(SwingConstants.BOTTOM);
+		lblNewLabel_4_2_1.setForeground(new Color(17, 29, 34));
+		lblNewLabel_4_2_1.setFont(new Font("Calibri", Font.BOLD, 20));
+		lblNewLabel_4_2_1.setBounds(19, 288, 180, 28);
+		ResetPassPanel.add(lblNewLabel_4_2_1);
+		
+		newPasswordTextField = new RoundedTextField(8, 1, Color.GRAY);
+		newPasswordTextField.setEditable(false);
+		newPasswordTextField.setForeground(new Color(17, 29, 34));
+		newPasswordTextField.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+		newPasswordTextField.setBounds(20, 312, 210, 40);
+		ResetPassPanel.add(newPasswordTextField);
+		
+		updatePasswordButton = new RoundedButton("Send OTP code", 12, 2, Color.GRAY);
+		updatePasswordButton.setEnabled(false);
+		updatePasswordButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		updatePasswordButton.setText("Update");
+		updatePasswordButton.setForeground(new Color(238, 238, 238));
+		updatePasswordButton.setFont(new Font("Segoe UI", Font.BOLD, 18));
+		updatePasswordButton.setFocusable(false);
+		updatePasswordButton.setBackground(new Color(17, 29, 34));
+		updatePasswordButton.setBounds(268, 309, 159, 45);
+		updatePasswordButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String newPass = newPasswordTextField.getText().trim();
+				
+				if (newPass.isBlank() || newPass.length() < 8) {
+					JOptionPane.showMessageDialog(null, "Password must have at least 8 character");
+					return;
+				}
+				
+				updatePassword(payeeName, newPass);
+			}
+		});
+		ResetPassPanel.add(updatePasswordButton);
+
+	}
+
+	protected void updatePassword(String payeeName2, String newPass) {
+		try {
+			this.socket = new Socket("localhost", 8000);
+			this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			this.writer = new PrintWriter(socket.getOutputStream(), true);
+			
+			this.writer.println("UPDATEPASS:"+payeeName+"_"+newPass);
+			JOptionPane.showMessageDialog(null, "Update password successfully");
+			
+			payeeTextField.setText(null);
+			emailTextField.setText(null);
+			otpTextField.setText(null);
+			otpTextField.setEditable(false);
+			checkOTPButton.setEnabled(false);
+			newPasswordTextField.setText(null);
+			newPasswordTextField.setEditable(false);
+			updatePasswordButton.setEnabled(false);
+			
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				this.socket.close();
+				this.writer.close();
+				this.reader.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}		
+	}
+
+	protected void sendOTPCode() {
+		payeeName = payeeTextField.getText().trim();
+		email = emailTextField.getText().trim();
+		
+		if (email.isBlank() || payeeName.isBlank()) {
+			JOptionPane.showMessageDialog(null, "Please fill in all the information.");
+			return;
+		}
+		
+		if (!isValidEmailAndPayeeName(email, payeeName)) {
+			JOptionPane.showMessageDialog(null, "Payeename and email is not match");
+			return;
+		}
+		
+		Random random = new Random();
+		int min = 10000000;
+		int max = 99999999;
+		
+		randomOTP = random.nextInt(max - min + 1) + min;
+		
+		new SendMailOTP(email, randomOTP+"");
+		
+		otpTextField.setEditable(true);
+		checkOTPButton.setEnabled(true);
+	}
+
+	private boolean isValidEmailAndPayeeName(String email, String payeeName) {
+		try {
+			this.socket = new Socket("localhost", 8000);
+			
+			this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			this.writer = new PrintWriter(socket.getOutputStream(), true);
+			
+			this.writer.println("CHECK_PAYEE_MAIL:"+payeeName+"_"+email);
+			String message = this.reader.readLine();
+			
+			if (message.equals("PAYEE_EMAIL_VALID")) {
+				return true;
+			} else if (message.equals("PAYEE_EMAIL_INVALID")) {
+				return false;
+			}
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				this.socket.close();
+				this.writer.close();
+				this.reader.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+		return false;
 	}
 
 	protected void loginWithAdminRigth() {

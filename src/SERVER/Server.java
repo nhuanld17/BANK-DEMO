@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.util.HashMap;
 
 import BUS.AccountBUS;
+import BUS.ClientBUS;
 import DAO.DBcon;
 
 public class Server {
@@ -46,8 +47,29 @@ public class Server {
 				}else {
 					writer.println("ADMIN_LOGIN_FAILED");
 				}
+			} else if (taskname.startsWith("CHECK_PAYEE_MAIL:")) {
+				String info = taskname.substring(17);
+				String[] infos = info.split("_");
+				
+				String payeename = infos[0];
+				String email = infos[1];
+				
+				if (isValidPayeeAndEmail(payeename, email)) {
+					writer.println("PAYEE_EMAIL_VALID");
+				} else {
+					writer.println("PAYEE_EMAIL_INVALID");
+				}
+			} else if (taskname.startsWith("UPDATEPASS:")) {
+				String info = taskname.substring(11);
+				String[] infos = info.split("_");
+				
+				new ClientBUS().updatePass(infos[0], infos[1]);
 			}
 		}
+	}
+
+	private boolean isValidPayeeAndEmail(String payeename, String email) {
+		return new ClientBUS().checkPayeeAndEmail(payeename, email);
 	}
 
 	private boolean isUserAlreadyLoggedIn(String username) {

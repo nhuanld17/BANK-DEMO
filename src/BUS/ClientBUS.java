@@ -30,4 +30,12 @@ public class ClientBUS {
 		new ClientDAO().deleteClient(payeeName);
 	}
 
+	public boolean checkPayeeAndEmail(String payeename, String email) {
+		return new ClientDAO().checkPayeeAndEmail(payeename, email);
+	}
+
+	public void updatePass(String payeename, String pass) {
+		new ClientDAO().updatePass(payeename, pass);
+	}
+
 }
