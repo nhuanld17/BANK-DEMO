@@ -64,6 +64,23 @@ public class Server {
 				String[] infos = info.split("_");
 				
 				new ClientBUS().updatePass(infos[0], infos[1]);
+			} else if (taskname.startsWith("CLIENTLOGIN")) {
+				String[] info = taskname.split("_");
+				String username = info[1];
+				String password = info[2];
+				
+				// Kiểm tra đăng nhập trùng lặp
+				if (isUserAlreadyLoggedIn(username)) {
+					writer.println("DUPLICATED_LOGIN");
+				}
+				
+				// Kiểm tra tài khoản và mật khẩu
+				else if (new AccountBUS().isValidClientAccount(username, password)) {
+					writer.println("CLIENT_LOGIN_SUCCESS");
+					ClientHandler clientHandler = new ClientHandler(username, reader, writer, clients);
+				}else {
+					writer.println("CLIENT_LOGIN_FAILED");
+				}
 			}
 		}
 	}

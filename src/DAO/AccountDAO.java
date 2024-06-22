@@ -37,4 +37,26 @@ public class AccountDAO {
 		}
 		return false;
 	}
+
+	public boolean isValidClientAccount(String username, String password) {
+		String hashPassword = "";
+		String query = "SELECT password FROM fk_bank.clients WHERE payee_name = '"+username+"'";
+		try {
+			ResultSet resultSet = new DBcon().queryDB(query);
+			while (resultSet.next()) {
+				hashPassword = resultSet.getString("password");
+			}
+			
+			if (hashPassword.isEmpty()) {
+				return false;
+			}
+			
+			return verify(password, hashPassword);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
 }

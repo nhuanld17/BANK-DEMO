@@ -151,31 +151,36 @@ public class LoginGUI extends JFrame {
 		roundedPasswordField.setBounds(39, 227, 357, 42);
 		LoginPanel.add(roundedPasswordField);
 		
-		RoundedButton roundedButton = new RoundedButton("LOG IN WITH ADMIN RIGHT", 12, 2, Color.gray);
-		roundedButton.addActionListener(new ActionListener() {
+		RoundedButton adminLogginButton = new RoundedButton("LOG IN WITH ADMIN RIGHT", 12, 2, Color.gray);
+		adminLogginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				loginWithAdminRigth();
 			}
 		});
-		roundedButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		roundedButton.setHorizontalAlignment(SwingConstants.LEADING);
-		roundedButton.setForeground(new Color(238, 238, 238));
-		roundedButton.setVerticalAlignment(SwingConstants.TOP);
-		roundedButton.setFont(new Font("Segoe UI", Font.BOLD, 18));
-		roundedButton.setBackground(new Color(19, 41, 18));
-		roundedButton.setBounds(39, 293, 357, 44);
-		LoginPanel.add(roundedButton);
+		adminLogginButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		adminLogginButton.setHorizontalAlignment(SwingConstants.LEADING);
+		adminLogginButton.setForeground(new Color(238, 238, 238));
+		adminLogginButton.setVerticalAlignment(SwingConstants.TOP);
+		adminLogginButton.setFont(new Font("Segoe UI", Font.BOLD, 18));
+		adminLogginButton.setBackground(new Color(19, 41, 18));
+		adminLogginButton.setBounds(39, 293, 357, 44);
+		LoginPanel.add(adminLogginButton);
 		
-		RoundedButton rndbtnLogInWith = new RoundedButton("LOG IN WITH ADMIN RIGHT", 12, 2, Color.gray);
-		rndbtnLogInWith.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		rndbtnLogInWith.setText("LOG IN WITH CLIENT RIGHT");
-		rndbtnLogInWith.setVerticalAlignment(SwingConstants.TOP);
-		rndbtnLogInWith.setHorizontalAlignment(SwingConstants.LEADING);
-		rndbtnLogInWith.setForeground(new Color(238, 238, 238));
-		rndbtnLogInWith.setFont(new Font("Segoe UI", Font.BOLD, 18));
-		rndbtnLogInWith.setBackground(new Color(19, 41, 18));
-		rndbtnLogInWith.setBounds(39, 347, 357, 44);
-		LoginPanel.add(rndbtnLogInWith);
+		RoundedButton clientLogginButton = new RoundedButton("LOG IN WITH ADMIN RIGHT", 12, 2, Color.gray);
+		clientLogginButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		clientLogginButton.setText("LOG IN WITH CLIENT RIGHT");
+		clientLogginButton.setVerticalAlignment(SwingConstants.TOP);
+		clientLogginButton.setHorizontalAlignment(SwingConstants.LEADING);
+		clientLogginButton.setForeground(new Color(238, 238, 238));
+		clientLogginButton.setFont(new Font("Segoe UI", Font.BOLD, 18));
+		clientLogginButton.setBackground(new Color(19, 41, 18));
+		clientLogginButton.setBounds(39, 347, 357, 44);
+		clientLogginButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				loginWithClientRight();
+			}
+		});
+		LoginPanel.add(clientLogginButton);
 		
 		JLabel lblNewLabel_3_2 = new JLabel("Forgot your password ?");
 		lblNewLabel_3_2.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -330,6 +335,42 @@ public class LoginGUI extends JFrame {
 		});
 		ResetPassPanel.add(updatePasswordButton);
 
+	}
+
+	protected void loginWithClientRight() {
+		String username = roundedTextField.getText().trim();
+		String password = roundedPasswordField.getText().trim();
+		
+		if (username.isBlank() || password.isBlank()) {
+			JOptionPane.showMessageDialog(null, "Please, Fill full the information");
+			return;
+		}
+		
+		try {
+			socket = new Socket("localhost", 8000);
+			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			writer = new PrintWriter(socket.getOutputStream(), true);
+			
+			writer.println("CLIENTLOGIN_"+username+"_"+password);
+			
+			String respone;
+			respone = reader.readLine();
+			
+			if (respone != null && respone.equals("CLIENT_LOGIN_SUCCESS")) {
+				JOptionPane.showMessageDialog(null, "Login successfully");
+				new ClientGUI(username, socket, writer, reader).setVisible(true);;
+				setVisible(false);
+			} else if (respone != null && respone.equals("CLIENT_LOGIN_FAILED")) {
+				JOptionPane.showMessageDialog(null, "Login failed !");
+				return;
+			} else if (respone != null && respone.equals("DUPLICATED_LOGIN") ) {
+				JOptionPane.showMessageDialog(null, "This account has been already logged in");
+				return;
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	protected void updatePassword(String payeeName2, String newPass) {

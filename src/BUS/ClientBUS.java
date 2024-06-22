@@ -38,4 +38,8 @@ public class ClientBUS {
 		new ClientDAO().updatePass(payeename, pass);
 	}
 
+	public String getDateCreated(String username) {
+		return new ClientDAO().getDateCreated(username);
+	}
+
 }

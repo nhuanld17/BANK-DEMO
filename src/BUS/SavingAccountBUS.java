@@ -12,4 +12,8 @@ public class SavingAccountBUS {
 		new SavingAccountDAO().adminTransferToSavingAccount(payeeName, amount);
 	}
 
+	public String getInfo(String username) {
+		return new SavingAccountDAO().getInfo(username);
+	}
+
 }

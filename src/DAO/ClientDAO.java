@@ -1,6 +1,7 @@
 package DAO;
 
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -168,5 +169,26 @@ public class ClientDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public String getDateCreated(String username) {
+		java.sql.Date dateCreated = null;
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		String query = "SELECT date_created FROM fk_bank.clients WHERE payee_name = '"+username+"'";
+		try {
+			ResultSet resultSet = new DBcon().queryDB(query);
+			
+			while (resultSet.next()) {
+				dateCreated = resultSet.getDate("date_created");
+			}
+			
+			return simpleDateFormat.format(dateCreated);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 }

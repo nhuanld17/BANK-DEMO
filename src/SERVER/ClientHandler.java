@@ -11,6 +11,8 @@ import java.util.List;
 import BUS.CheckingAccountBUS;
 import BUS.ClientBUS;
 import BUS.SavingAccountBUS;
+import BUS.TransactionBUS;
+import DAO.ClientDAO;
 
 public class ClientHandler extends Thread{
 	private BufferedReader reader;
@@ -38,6 +40,11 @@ public class ClientHandler extends Thread{
 			if (this.username.equals("admin")) {
 				sendListPayeeName();
 				sendListUser();
+			}else {
+				sendDateCreated();
+				sendCheckingAccountInfo();
+				sendSavingAccountInfo();
+				sendIncomeAndExpense();
 			}
 			while (true) {
 				String message = reader.readLine();
@@ -128,6 +135,26 @@ public class ClientHandler extends Thread{
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private void sendIncomeAndExpense() {
+		String incomeAndExpense = "INEX:"+ new TransactionBUS().getIncomAndExpense(this.username);
+		this.writer.println(incomeAndExpense);
+	}
+
+	private void sendSavingAccountInfo() {
+		String savingInfo = "SAVING_ACC_INFO:" + new SavingAccountBUS().getInfo(this.username);
+		this.writer.println(savingInfo);
+	}
+
+	private void sendCheckingAccountInfo() {
+		String checkingInfo = "CHECKING_ACC_INFO:" + new CheckingAccountBUS().getInfo(this.username);
+		this.writer.println(checkingInfo);
+	}
+
+	private void sendDateCreated() {
+		String dateCreated ="DATECREATED:" + new ClientBUS().getDateCreated(this.username);
+		this.writer.println(dateCreated);
 	}
 
 	private void sendListUser() {

@@ -48,4 +48,27 @@ public class CheckingAccountDAO {
 		return currentBalance;
 	}
 
+	public String getInfo(String username) {
+		String info = "";
+		String query = "SELECT * FROM fk_bank.checkingaccount WHERE owner = '"+username+"'";
+		try {
+			ResultSet resultSet = new DBcon().queryDB(query);
+			while (resultSet.next()) {
+				int accNumber = resultSet.getInt("accountnumber");
+				double transactionLimit = resultSet.getDouble("transactionlimit");
+				double balance = resultSet.getDouble("balance");
+				
+				info = accNumber+"_"+transactionLimit+"_"+balance;
+			}
+			
+			return info;
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return info;
+	}
+
 }

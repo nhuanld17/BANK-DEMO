@@ -12,4 +12,8 @@ public class CheckingAccountBUS {
 	public void adminTransferToCheckingAcc(String payeeName, double amount) {
 		new CheckingAccountDAO().adminTransferToCheckingAcc(payeeName,amount);
 	}
+
+	public String getInfo(String username) {
+		return new CheckingAccountDAO().getInfo(username);
+	}
 }

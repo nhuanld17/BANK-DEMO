@@ -114,7 +114,7 @@ public class AdminGUI extends JFrame {
 		this.writer = writer;
 		this.payeeName = payeeName;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 20, 1080, 681);
+		setBounds(200, 20, 1080, 681);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 

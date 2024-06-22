@@ -44,7 +44,7 @@ public class ClientFrame extends JFrame {
 	 */
 	public ClientFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1080, 618);
+		setBounds(200, 50, 1080, 651);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -53,13 +53,13 @@ public class ClientFrame extends JFrame {
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(40, 41, 33));
-		panel.setBounds(0, -1, 173, 581);
+		panel.setBounds(0, -1, 173, 613);
 		contentPane.add(panel);
 		panel.setLayout(null);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBackground(new Color(27, 28, 29));
-		panel_1.setBounds(173, 0, 891, 589);
+		panel_1.setBounds(173, 0, 891, 612);
 		contentPane.add(panel_1);
 		panel_1.setLayout(null);
 		
@@ -352,15 +352,11 @@ public class ClientFrame extends JFrame {
 		
 		JScrollPane scrollPane = new JScrollPane(panel_4);
 		
-		JPanel panel_5 = new JPanel();
-		panel_5.setBounds(10, 11, 577, 49);
-		panel_4.add(panel_5);
-		
 //		JPanel panel_5 = new JPanel();
 //		panel_5.setBackground(new Color(64, 49, 43));
 //		panel_5.setBounds(6, 6, 579, 49);
 //		panel_4.add(panel_5);
-		scrollPane.setBounds(16, 310, 599, 263);
+		scrollPane.setBounds(16, 310, 599, 280);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 		scrollPane.getVerticalScrollBar().setUnitIncrement(16); // Đặt giá trị unit increment
