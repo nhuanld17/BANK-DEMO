@@ -138,9 +138,9 @@ public class AdminGUI extends JFrame {
 		
 		JLabel lblNewLabel_1 = new JLabel("JRT BANK");
 		lblNewLabel_1.setForeground(new Color(236, 236, 236));
-		lblNewLabel_1.setFont(new Font("Segoe UI", Font.BOLD, 27));
+		lblNewLabel_1.setFont(new Font("Agency FB", Font.BOLD, 35));
 		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_1.setBounds(6, 89, 176, 34);
+		lblNewLabel_1.setBounds(6, 89, 176, 40);
 		sidebarPanel.add(lblNewLabel_1);
 		
 		JSeparator separator = new JSeparator();

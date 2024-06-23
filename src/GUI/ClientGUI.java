@@ -9,6 +9,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.ImageIcon;
@@ -23,6 +25,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import COMPONENT.RoundedPanel;
+import java.awt.Cursor;
 
 public class ClientGUI extends JFrame {
 
@@ -39,10 +42,19 @@ public class ClientGUI extends JFrame {
 	private String dateCreated;
 	private int checkingAccountNumber;
 	private int savingAccountNumber;
+	private double checkingAccountBalance;
+	private double savingAccountBalance;
 	private double income;
 	private double expense;
 	private double transactionLimitChecking;
 	private double transactionLimitSaving;
+	private JLabel currentBalanceLabel;
+	private JLabel checkingDateCreatedLabel;
+	private JLabel savingDateCreatedLabel;
+	private JLabel checkingCardBalanceLabel;
+	private JLabel savingCardBalanceLabel;
+	private JLabel checkingNumberLabel;
+	private JLabel savingNumberLabel;
 
 	public ClientGUI(String payeeName, Socket socket, PrintWriter writer, BufferedReader reader) {
 		this.socket = socket;
@@ -68,11 +80,11 @@ public class ClientGUI extends JFrame {
 		lblNewLabel.setBounds(0, 0, 188, 96);
 		sidebarPanel.add(lblNewLabel);
 		
-		JLabel lblNewLabel_1 = new JLabel("JRT BANK");
+		JLabel lblNewLabel_1 = new JLabel("JRTBANK");
 		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel_1.setForeground(new Color(236, 236, 236));
-		lblNewLabel_1.setFont(new Font("Segoe UI", Font.BOLD, 27));
-		lblNewLabel_1.setBounds(6, 93, 176, 34);
+		lblNewLabel_1.setFont(new Font("Agency FB", Font.BOLD, 35));
+		lblNewLabel_1.setBounds(6, 93, 176, 41);
 		sidebarPanel.add(lblNewLabel_1);
 		
 		JSeparator separator = new JSeparator();
@@ -88,6 +100,7 @@ public class ClientGUI extends JFrame {
 		sidebarPanel.add(panelDashBoardButton);
 		
 		JButton dashboardButton = new JButton("Dashboard");
+		dashboardButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		dashboardButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				tabbedPane.setSelectedIndex(0);
@@ -105,10 +118,11 @@ public class ClientGUI extends JFrame {
 		RoundedPanel panelTransactionButton = new RoundedPanel(12, 3, new Color(199, 199, 199));
 		panelTransactionButton.setLayout(null);
 		panelTransactionButton.setBackground(new Color(250, 144, 24));
-		panelTransactionButton.setBounds(22, 299, 143, 45);
+		panelTransactionButton.setBounds(22, 307, 143, 45);
 		sidebarPanel.add(panelTransactionButton);
 		
 		JButton transactionButton = new JButton("Transactions");
+		transactionButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		transactionButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				tabbedPane.setSelectedIndex(1);
@@ -126,10 +140,11 @@ public class ClientGUI extends JFrame {
 		RoundedPanel accountPanelButton = new RoundedPanel(12, 3, new Color(199, 199, 199));
 		accountPanelButton.setLayout(null);
 		accountPanelButton.setBackground(new Color(250, 144, 24));
-		accountPanelButton.setBounds(22, 355, 143, 45);
+		accountPanelButton.setBounds(22, 367, 143, 45);
 		sidebarPanel.add(accountPanelButton);
 		
 		JButton accountButton = new JButton("Account");
+		accountButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		accountButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				tabbedPane.setSelectedIndex(2);
@@ -147,10 +162,11 @@ public class ClientGUI extends JFrame {
 		RoundedPanel panelLoggoutButton = new RoundedPanel(12, 3, new Color(199, 199, 199));
 		panelLoggoutButton.setLayout(null);
 		panelLoggoutButton.setBackground(new Color(250, 144, 24));
-		panelLoggoutButton.setBounds(22, 411, 143, 45);
+		panelLoggoutButton.setBounds(22, 428, 143, 45);
 		sidebarPanel.add(panelLoggoutButton);
 		
 		JButton btnLoggout = new JButton("Logout");
+		btnLoggout.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnLoggout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				logout();
@@ -166,12 +182,140 @@ public class ClientGUI extends JFrame {
 		panelLoggoutButton.add(btnLoggout);
 		
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.setBounds(187, 0, 882, 648);
+		tabbedPane.setBounds(183, -28, 886, 676);
 		contentPane.add(tabbedPane);
 		
 		JPanel dashboardPanel = new JPanel();
+		dashboardPanel.setBackground(new Color(27, 28, 29));
 		tabbedPane.addTab("dashboard", null, dashboardPanel, null);
 		dashboardPanel.setLayout(null);
+		
+		JLabel lblNewLabel_2 = new JLabel("Total Balance");
+		lblNewLabel_2.setForeground(new Color(155, 160, 164));
+		lblNewLabel_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblNewLabel_2.setBounds(26, 11, 158, 33);
+		dashboardPanel.add(lblNewLabel_2);
+		
+		currentBalanceLabel = new JLabel("$ 10000");
+		currentBalanceLabel.setForeground(SystemColor.text);
+		currentBalanceLabel.setFont(new Font("Courier New", Font.BOLD, 20));
+		currentBalanceLabel.setBounds(26, 42, 182, 33);
+		dashboardPanel.add(currentBalanceLabel);
+		
+		JLabel lblNewLabel_2_1 = new JLabel("Date");
+		lblNewLabel_2_1.setForeground(new Color(155, 160, 164));
+		lblNewLabel_2_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblNewLabel_2_1.setBounds(440, 11, 158, 33);
+		dashboardPanel.add(lblNewLabel_2_1);
+		
+		LocalDate currentDate = LocalDate.now();
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		
+		JLabel currentDateLabel = new JLabel(currentDate.format(dateTimeFormatter));
+		currentDateLabel.setForeground(SystemColor.text);
+		currentDateLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		currentDateLabel.setBounds(440, 42, 139, 33);
+		dashboardPanel.add(currentDateLabel);
+		
+		JLabel lblNewLabel_2_2 = new JLabel("Card");
+		lblNewLabel_2_2.setForeground(new Color(155, 160, 164));
+		lblNewLabel_2_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblNewLabel_2_2.setBounds(26, 86, 158, 33);
+		dashboardPanel.add(lblNewLabel_2_2);
+		
+		RoundedPanel checkingCardPanel = new RoundedPanel(15, 5, new Color(88, 88, 91));
+		checkingCardPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		checkingCardPanel.setBackground(new Color(250, 144, 25));
+		checkingCardPanel.setBounds(26, 123, 297, 164);
+		dashboardPanel.add(checkingCardPanel);
+		checkingCardPanel.setLayout(null);
+		
+		checkingCardBalanceLabel = new JLabel("$ 10000");
+		checkingCardBalanceLabel.setForeground(SystemColor.text);
+		checkingCardBalanceLabel.setFont(new Font("Courier New", Font.BOLD, 20));
+		checkingCardBalanceLabel.setBounds(12, 9, 101, 33);
+		checkingCardPanel.add(checkingCardBalanceLabel);
+		
+		JLabel currentBalanceLabel_1_1 = new JLabel("JRTBANK");
+		currentBalanceLabel_1_1.setHorizontalAlignment(SwingConstants.CENTER);
+		currentBalanceLabel_1_1.setForeground(SystemColor.desktop);
+		currentBalanceLabel_1_1.setFont(new Font("Agency FB", Font.BOLD, 25));
+		currentBalanceLabel_1_1.setBounds(185, 4, 103, 38);
+		checkingCardPanel.add(currentBalanceLabel_1_1);
+		
+		JLabel nameCheckingLabel = new JLabel(clientName);
+		nameCheckingLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		nameCheckingLabel.setFont(new Font("Heebo", Font.PLAIN, 18));
+		nameCheckingLabel.setForeground(SystemColor.desktop);
+		nameCheckingLabel.setBounds(6, 50, 252, 33);
+		checkingCardPanel.add(nameCheckingLabel);
+		
+		JLabel lblNewLabel_3 = new JLabel("");
+		lblNewLabel_3.setIcon(new ImageIcon(ClientGUI.class.getResource("/icon/icons8-money-50.png")));
+		lblNewLabel_3.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_3.setBounds(12, 102, 62, 51);
+		checkingCardPanel.add(lblNewLabel_3);
+		
+		checkingDateCreatedLabel = new JLabel("20/10/2005");
+		checkingDateCreatedLabel.setForeground(SystemColor.window);
+		checkingDateCreatedLabel.setFont(new Font("Heebo", Font.PLAIN, 18));
+		checkingDateCreatedLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		checkingDateCreatedLabel.setBounds(84, 85, 187, 33);
+		checkingCardPanel.add(checkingDateCreatedLabel);
+		
+		checkingNumberLabel = new JLabel("*** ***");
+		checkingNumberLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		checkingNumberLabel.setForeground(SystemColor.window);
+		checkingNumberLabel.setFont(new Font("Heebo", Font.PLAIN, 18));
+		checkingNumberLabel.setBounds(84, 120, 187, 33);
+		checkingCardPanel.add(checkingNumberLabel);
+		
+		RoundedPanel checkingCardPanel_1 = new RoundedPanel(15, 5, new Color(88, 88, 91));
+		checkingCardPanel_1.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		checkingCardPanel_1.setLayout(null);
+		checkingCardPanel_1.setBackground(new Color(250, 144, 25));
+		checkingCardPanel_1.setBounds(348, 123, 297, 164);
+		dashboardPanel.add(checkingCardPanel_1);
+		
+		savingCardBalanceLabel = new JLabel("$ 10000");
+		savingCardBalanceLabel.setForeground(SystemColor.text);
+		savingCardBalanceLabel.setFont(new Font("Courier New", Font.BOLD, 20));
+		savingCardBalanceLabel.setBounds(12, 9, 101, 33);
+		checkingCardPanel_1.add(savingCardBalanceLabel);
+		
+		JLabel currentBalanceLabel_1_1_1 = new JLabel("JRTBANK");
+		currentBalanceLabel_1_1_1.setHorizontalAlignment(SwingConstants.CENTER);
+		currentBalanceLabel_1_1_1.setForeground(SystemColor.desktop);
+		currentBalanceLabel_1_1_1.setFont(new Font("Agency FB", Font.BOLD, 25));
+		currentBalanceLabel_1_1_1.setBounds(185, 4, 103, 38);
+		checkingCardPanel_1.add(currentBalanceLabel_1_1_1);
+		
+		JLabel nameSavingLabel = new JLabel("Le Dinh Nhuan");
+		nameSavingLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		nameSavingLabel.setForeground(SystemColor.desktop);
+		nameSavingLabel.setFont(new Font("Heebo", Font.PLAIN, 18));
+		nameSavingLabel.setBounds(6, 50, 252, 33);
+		checkingCardPanel_1.add(nameSavingLabel);
+		
+		JLabel lblNewLabel_3_1 = new JLabel("");
+		lblNewLabel_3_1.setIcon(new ImageIcon(ClientGUI.class.getResource("/icon/icons8-greentech-50.png")));
+		lblNewLabel_3_1.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_3_1.setBounds(12, 102, 62, 51);
+		checkingCardPanel_1.add(lblNewLabel_3_1);
+		
+		savingDateCreatedLabel = new JLabel("20/10/2005");
+		savingDateCreatedLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		savingDateCreatedLabel.setForeground(SystemColor.window);
+		savingDateCreatedLabel.setFont(new Font("Heebo", Font.PLAIN, 18));
+		savingDateCreatedLabel.setBounds(84, 85, 187, 33);
+		checkingCardPanel_1.add(savingDateCreatedLabel);
+		
+		savingNumberLabel = new JLabel("*** ***");
+		savingNumberLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		savingNumberLabel.setForeground(SystemColor.window);
+		savingNumberLabel.setFont(new Font("Heebo", Font.PLAIN, 18));
+		savingNumberLabel.setBounds(84, 120, 187, 33);
+		checkingCardPanel_1.add(savingNumberLabel);
 		
 		JPanel transactionPanel = new JPanel();
 		tabbedPane.addTab("transactionPanel", null, transactionPanel, null);
@@ -185,24 +329,48 @@ public class ClientGUI extends JFrame {
 				while (running.get() && !Thread.currentThread().isInterrupted()) {
 					String message = this.reader.readLine();
 					
+					if (message.startsWith("NAME:")) {
+						this.clientName = message.substring(5);
+						System.out.println(clientName);
+						nameCheckingLabel.setText(this.clientName);
+						nameSavingLabel.setText(this.clientName);
+					}
+					
 					if (message.startsWith("DATECREATED:")) {
 						dateCreated = message.substring(12);
 						System.out.println(dateCreated);
+						checkingDateCreatedLabel.setText(dateCreated);
+						savingDateCreatedLabel.setText(dateCreated);
 					}
 					
 					if (message.startsWith("CHECKING_ACC_INFO:")) {
 						String checkingInfo = message.substring(18);
 						System.out.println(checkingInfo);
+						String[] infos = checkingInfo.split("_");
+						checkingNumberLabel.setText("*** *** "+infos[0]);
+						transactionLimitChecking = Double.valueOf(infos[1]);
+						checkingCardBalanceLabel.setText("$ "+infos[2]);
+						this.checkingAccountNumber = Integer.valueOf(infos[0]);
+						this.checkingAccountBalance = Double.valueOf(infos[2]);
 					}
 					
 					if (message.startsWith("SAVING_ACC_INFO:")) {
 						String savingInfo = message.substring(16);
 						System.out.println(savingInfo);
+						String[] infos = savingInfo.split("_");
+						savingNumberLabel.setText("*** *** "+infos[0]);
+						transactionLimitSaving = Double.valueOf(infos[1]);
+						savingCardBalanceLabel.setText("$ "+infos[2]);
+						this.savingAccountNumber = Integer.valueOf(infos[0]);
+						this.savingAccountBalance = Double.valueOf(infos[2]);
 					}
 					
 					if (message.startsWith("INEX:")) {
 						String INEX = message.substring(5);
 						System.out.println(INEX);
+						String[] infos = INEX.split("_");
+						this.income = Double.valueOf(infos[0]);
+						this.expense = Double.valueOf(infos[1]);
 					}
 				}
 			} catch (IOException e) {

@@ -42,4 +42,8 @@ public class ClientBUS {
 		return new ClientDAO().getDateCreated(username);
 	}
 
+	public String getName(String username) {
+		return new ClientDAO().getName(username);
+	}
+
 }

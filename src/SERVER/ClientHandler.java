@@ -4,9 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import BUS.CheckingAccountBUS;
 import BUS.ClientBUS;
@@ -41,6 +43,7 @@ public class ClientHandler extends Thread{
 				sendListPayeeName();
 				sendListUser();
 			}else {
+				sendName();
 				sendDateCreated();
 				sendCheckingAccountInfo();
 				sendSavingAccountInfo();
@@ -137,6 +140,11 @@ public class ClientHandler extends Thread{
 		}
 	}
 
+	private void sendName() {
+		String name = "NAME:" + removeAccents(new ClientBUS().getName(this.username));
+		this.writer.println(name);
+	}
+
 	private void sendIncomeAndExpense() {
 		String incomeAndExpense = "INEX:"+ new TransactionBUS().getIncomAndExpense(this.username);
 		this.writer.println(incomeAndExpense);
@@ -166,5 +174,15 @@ public class ClientHandler extends Thread{
 		ArrayList<String> payeeList = new ClientBUS().getPayeeList();
 		String listPayeeStr = "LISTPAYEENAME_"+ String.join("_", payeeList);
 		this.writer.println(listPayeeStr);
+	}
+	
+	private String removeAccents(String name) {
+		// Chuẩn hóa tên, chuyển đổi tiếng việt thành kí tự tổ hợp
+		String normalized = Normalizer.normalize(name, Normalizer.Form.NFD);
+		
+		// Loại bỏ dấu bằng biểu thức chính quy
+		Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+		
+		return pattern.matcher(normalized).replaceAll("").replace('đ', 'd').replace('Đ', 'D');
 	}
 }

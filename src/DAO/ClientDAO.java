@@ -191,4 +191,22 @@ public class ClientDAO {
 		
 		return null;
 	}
+
+	public String getName(String username) {
+		String name = "";
+		String query = "SELECT fullname FROM fk_bank.clients WHERE payee_name = '"+username+"'";
+		try {
+			ResultSet resultSet = new DBcon().queryDB(query);
+			while (resultSet.next()) {
+				name = resultSet.getString("fullname");
+			}
+			
+			return name;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
 }
