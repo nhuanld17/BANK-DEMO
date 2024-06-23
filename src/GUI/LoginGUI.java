@@ -99,14 +99,14 @@ public class LoginGUI extends JFrame {
 		JLabel lblNewLabel_1 = new JLabel("JRT BANK");
 		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel_1.setForeground(new Color(238, 238, 238));
-		lblNewLabel_1.setFont(new Font("Segoe UI", Font.BOLD, 30));
-		lblNewLabel_1.setBounds(0, 86, 281, 81);
+		lblNewLabel_1.setFont(new Font("Agency FB", Font.BOLD, 30));
+		lblNewLabel_1.setBounds(0, 117, 281, 50);
 		panel.add(lblNewLabel_1);
 		
-		JLabel lblNewLabel_1_1 = new JLabel("Credibility and Responsibility");
+		JLabel lblNewLabel_1_1 = new JLabel("Your Trust, Our Commitment");
 		lblNewLabel_1_1.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel_1_1.setForeground(new Color(238, 238, 238));
-		lblNewLabel_1_1.setFont(new Font("Segoe UI Semibold", Font.BOLD, 20));
+		lblNewLabel_1_1.setFont(new Font("Heebo", Font.BOLD, 18));
 		lblNewLabel_1_1.setBounds(1, 265, 281, 41);
 		panel.add(lblNewLabel_1_1);
 		tabbedPane.setBounds(280, -25, 441, 506);

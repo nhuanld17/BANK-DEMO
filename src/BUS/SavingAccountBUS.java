@@ -16,4 +16,8 @@ public class SavingAccountBUS {
 		return new SavingAccountDAO().getInfo(username);
 	}
 
+	public void sendFundToCheckingAccount(String payeeName, double money) {
+		new SavingAccountDAO().sendFundToCheckingAccount(payeeName, money);
+	}
+
 }

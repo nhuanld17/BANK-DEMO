@@ -30,7 +30,7 @@ public class CheckingAccountDAO {
 		}
 	}
 
-	private double getCurrentCheckingBalance(String payeeName) {
+	public double getCurrentCheckingBalance(String payeeName) {
 		double currentBalance = 0;
 		String query = "SELECT balance FROM fk_bank.checkingaccount WHERE owner = '"+payeeName+"'";
 		try {
@@ -69,6 +69,26 @@ public class CheckingAccountDAO {
 		}
 		
 		return info;
+	}
+
+	public void sendFundToSavingAccount(String payeeName, double money) {
+		double currentCheckingBalance = getCurrentCheckingBalance(payeeName);
+		double currentSavingBalance = new SavingAccountDAO().getCurrentSavingBalance(payeeName);
+		currentCheckingBalance -= money;
+		currentSavingBalance += money;
+		
+		String query1 = "UPDATE fk_bank.checkingaccount SET balance = '"+currentCheckingBalance+"'"
+				+ " WHERE owner = '"+payeeName+"'";
+		String query2 = "UPDATE fk_bank.savingaccount SET balance = '"+currentSavingBalance+"'"
+				+ " WHERE owner = '"+payeeName+"'";
+		
+		try {
+			new DBcon().updateDB(query1);
+			new DBcon().updateDB(query2);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

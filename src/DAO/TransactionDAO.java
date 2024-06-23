@@ -6,8 +6,8 @@ public class TransactionDAO {
 
 	public String getIncomAndExpense(String username) {
 		String res = "";
-		String query1 = "SELECT SUM(amount) FROM fk_bank.transaction_history WHERE sender = '"+username+"' AND method = 'SEND TO'";
-		String query2 = "SELECT SUM(amount) FROM fk_bank.transaction_history WHERE receiver = '"+username+"' AND method = 'RECEIVE FROM'";
+		String query1 = "SELECT SUM(amount) FROM fk_bank.transaction_history WHERE sender = '"+username+"'";
+		String query2 = "SELECT SUM(amount) FROM fk_bank.transaction_history WHERE receiver = '"+username+"'";
 		try {
 			ResultSet resultSet1 = new DBcon().queryDB(query1);
 			ResultSet resultSet2 = new DBcon().queryDB(query2);

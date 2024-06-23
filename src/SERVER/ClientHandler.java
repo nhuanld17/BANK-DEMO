@@ -123,6 +123,24 @@ public class ClientHandler extends Thread{
 					double amount = Double.valueOf(infos[1]);
 					
 					new SavingAccountBUS().adminTransferToSavingAccount(payeeName, amount);
+				} else if (message.startsWith("FUNTTOSAVING:")) {
+					String info = message.substring(13);
+					String[] infos = info.split("_");
+					String payeeName = infos[0];
+					double money = Double.valueOf(infos[1]);
+					
+					new CheckingAccountBUS().sendFundToSavingAccount(payeeName, money);
+					sendCheckingAccountInfo();
+					sendSavingAccountInfo();
+				} else if (message.startsWith("FUNTTOCHECKING:")) {
+					String info = message.substring(15);
+					String[] infos = info.split("_");
+					String payeeName = infos[0];
+					double money = Double.valueOf(infos[1]);
+					
+					new SavingAccountBUS().sendFundToCheckingAccount(payeeName, money);
+					sendCheckingAccountInfo();
+					sendSavingAccountInfo();
 				}
 			}
 		} catch (Exception e) {
