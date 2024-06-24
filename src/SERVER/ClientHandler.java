@@ -135,7 +135,7 @@ public class ClientHandler extends Thread{
 					double amount = Double.valueOf(infos[1]);
 					
 					new SavingAccountBUS().adminTransferToSavingAccount(payeeName, amount);
-					
+					Server.sendTransferNotification(payeeName, "SYSTEM_TRANSFER_SAVING:"+amount, this);
 				} else if (message.startsWith("FUNTTOSAVING:")) {
 					String info = message.substring(13);
 					String[] infos = info.split("_");
