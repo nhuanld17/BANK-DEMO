@@ -46,4 +46,8 @@ public class ClientBUS {
 		return new ClientDAO().getName(username);
 	}
 
+	public boolean isValidReceiver(String receiver) {
+		return new ClientDAO().isValidReceiver(receiver);
+	}
+
 }

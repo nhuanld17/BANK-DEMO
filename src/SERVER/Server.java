@@ -113,4 +113,14 @@ public class Server {
 			}
 		}
 	}
+
+	public static void sendBalanceChangeNotification(String sender, String receiver, String message, String description,
+			double money, ClientHandler clientSender) {
+		for (ClientHandler client : clients.values()) {
+			// TODO: Gửi thông báo cho người nhận
+			if (client != clientSender && client.getUsername().equals(receiver)) {
+				client.sendBalanceChangeNotification(sender, receiver, description, money);
+			}
+		}
+	}
 }

@@ -25,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
@@ -76,6 +77,9 @@ public class ClientGUI extends JFrame {
 	private JLabel savingCardNumberLabel;
 	private RoundedTextField funtsToCheckingTextField;
 	private RoundedTextField funtsToSavingTextField;
+	private RoundedTextField receiverAddressTextField;
+	private RoundedTextField amountMoneyTextField;
+	private JTextArea messageTextArea;
 
 	public ClientGUI(String payeeName, Socket socket, PrintWriter writer, BufferedReader reader) {
 		setResizable(false);
@@ -512,6 +516,83 @@ public class ClientGUI extends JFrame {
 		JPanel transactionPanel = new JPanel();
 		transactionPanel.setBackground(new Color(27, 28, 29));
 		tabbedPane.addTab("transactionPanel", null, transactionPanel, null);
+		transactionPanel.setLayout(null);
+		
+		JLabel lblNewLabel_9 = new JLabel("Transaction History");
+		lblNewLabel_9.setForeground(SystemColor.window);
+		lblNewLabel_9.setFont(new Font("Heebo", Font.PLAIN, 18));
+		lblNewLabel_9.setBounds(24, 8, 203, 36);
+		transactionPanel.add(lblNewLabel_9);
+		
+		JPanel transactionHistoryPanel = new JPanel();
+		transactionHistoryPanel.setBackground(new Color(80, 71, 75));
+		transactionHistoryPanel.setBounds(24, 46, 845, 339);
+		transactionHistoryPanel.setLayout(null);
+		
+		JScrollPane scrollPane_1 = new JScrollPane(transactionHistoryPanel);
+		scrollPane_1.setBorder(null);
+		scrollPane_1.setBounds(24, 46, 845, 339);
+		transactionPanel.add(scrollPane_1);
+		
+		JLabel lblNewLabel_9_1 = new JLabel("Receiver address");
+		lblNewLabel_9_1.setForeground(SystemColor.window);
+		lblNewLabel_9_1.setFont(new Font("Heebo", Font.PLAIN, 18));
+		lblNewLabel_9_1.setBounds(24, 413, 187, 36);
+		transactionPanel.add(lblNewLabel_9_1);
+		
+		JLabel lblNewLabel_9_1_1 = new JLabel("Amount");
+		lblNewLabel_9_1_1.setForeground(SystemColor.window);
+		lblNewLabel_9_1_1.setFont(new Font("Heebo", Font.PLAIN, 18));
+		lblNewLabel_9_1_1.setBounds(24, 472, 187, 36);
+		transactionPanel.add(lblNewLabel_9_1_1);
+		
+		receiverAddressTextField = new RoundedTextField(8, 1, new Color(27, 28, 29));
+		receiverAddressTextField.setFont(new Font("Heebo", Font.PLAIN, 18));
+		receiverAddressTextField.setForeground(SystemColor.desktop);
+		receiverAddressTextField.setBounds(227, 411, 322, 36);
+		transactionPanel.add(receiverAddressTextField);
+		
+		amountMoneyTextField = new RoundedTextField(8, 1, new Color(27, 28, 29));
+		amountMoneyTextField.setFont(new Font("Heebo", Font.PLAIN, 18));
+		amountMoneyTextField.setForeground(SystemColor.desktop);
+		amountMoneyTextField.setBounds(227, 472, 322, 36);
+		transactionPanel.add(amountMoneyTextField);
+		
+		JLabel lblNewLabel_9_1_1_1 = new JLabel("Message");
+		lblNewLabel_9_1_1_1.setForeground(SystemColor.window);
+		lblNewLabel_9_1_1_1.setFont(new Font("Heebo", Font.PLAIN, 18));
+		lblNewLabel_9_1_1_1.setBounds(24, 531, 187, 36);
+		transactionPanel.add(lblNewLabel_9_1_1_1);
+		
+		messageTextArea = new JTextArea();
+		messageTextArea.setLineWrap(true);
+		messageTextArea.setWrapStyleWord(true);
+		messageTextArea.setFont(new Font("Heebo", Font.PLAIN, 18));
+		messageTextArea.setBorder(null);
+		messageTextArea.setBounds(227, 539, 322, 84);
+		transactionPanel.add(messageTextArea);
+		
+		RoundedPanel transferButtonPanel = new RoundedPanel(12, 3, new Color(199, 199, 199));
+		transferButtonPanel.setLayout(null);
+		transferButtonPanel.setBackground(new Color(200, 100, 0));
+		transferButtonPanel.setBounds(559, 584, 132, 39);
+		transactionPanel.add(transferButtonPanel);
+		
+		JButton depositButton = new JButton("Transfer");
+		depositButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		depositButton.setIconTextGap(2);
+		depositButton.setForeground(SystemColor.window);
+		depositButton.setFont(new Font("Segoe UI", Font.BOLD, 18));
+		depositButton.setFocusable(false);
+		depositButton.setBorder(null);
+		depositButton.setBackground(new Color(200, 100, 0));
+		depositButton.setBounds(4, 3, 121, 32);
+		depositButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				transferMoney();
+			}
+		});
+		transferButtonPanel.add(depositButton);
 		
 		JPanel account = new JPanel();
 		account.setBackground(new Color(27, 28, 29));
@@ -805,6 +886,21 @@ public class ClientGUI extends JFrame {
 						JOptionPane.showMessageDialog(null, "Admin transfered "+ money +"$ to your saving account");
 						tabbedPane.setSelectedIndex(2);
 					}
+					
+					if (message.equals("INVALID_RECEIVER")) {
+						JOptionPane.showMessageDialog(null, "Receiver is not exist");
+					}
+					
+					if (message.startsWith("TRANSFER:")) {
+						String info = message.substring(9);
+						String[] infos = info.split("_");
+						String sender = infos[0];
+						String receiver = infos[1];
+						double money = Double.valueOf(infos[2]);
+						String description = infos[3];
+						
+						JOptionPane.showMessageDialog(null, sender + " SEND TO YOU "+money+"$ WITH MESSAGE: "+description);
+					}
 				}
 			} catch (IOException e) {
 		        if (!running.get()) {
@@ -816,6 +912,42 @@ public class ClientGUI extends JFrame {
 			}
 		});
 		listen.start();
+	}
+
+	protected void transferMoney() {
+		String receiver = receiverAddressTextField.getText().trim();
+		String moneyString = amountMoneyTextField.getText().trim();
+		String message = messageTextArea.getText().trim();
+		
+		if (receiver.isBlank() || moneyString.isBlank() || message.isBlank()) {
+			JOptionPane.showMessageDialog(null, "Please enter all the required information.");
+			return;
+		}
+		
+		double money = 0;
+		try {
+			money = Double.valueOf(moneyString);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Invalid amount");
+		}
+		
+		if (money <= 0) {
+			JOptionPane.showMessageDialog(null, "Amount of money must be greater than 0");
+			return;
+		}
+		
+		if (money > transactionLimitChecking) {
+			JOptionPane.showMessageDialog(null, "Amount of money must be less than or equal to limit transaction");
+			return;
+		}
+		
+		if (money > this.checkingAccountBalance) {
+			JOptionPane.showMessageDialog(null, "Current balance is not enough for this transaction");
+			return;
+		}
+		
+		this.writer.println("TRANSFER_FROM:"+payeeName+"_"+receiver+"_"+money+"_"+message);
+		
 	}
 
 	protected void sendFundToCheckingAccount() {

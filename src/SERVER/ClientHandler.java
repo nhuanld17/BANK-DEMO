@@ -154,6 +154,25 @@ public class ClientHandler extends Thread{
 					new SavingAccountBUS().sendFundToCheckingAccount(payeeName, money);
 					sendCheckingAccountInfo();
 					sendSavingAccountInfo();
+				} else if (message.startsWith("TRANSFER_FROM:")) {
+					String info = message.substring(14);
+					String[] infos = info.split("_");
+					String sender = infos[0];
+					String receiver = infos[1];
+					double money = Double.valueOf(infos[2]);
+					String mess = infos[3];
+					
+					if (!isValidReceiver(receiver)) {
+						this.writer.println("INVALID_RECEIVER");
+					}
+					
+					new TransactionBUS().saveTransactionHistory(sender, receiver, money, mess);
+					// Gửi info của tài khoản thanh toán và vị chi , vị thu cho người gửi
+					sendCheckingAccountInfo();
+					sendIncomeAndExpense();
+					
+					// Gửi thông báo cho người nhận và gửi info tk thanh toán, vị thu vị chi
+					Server.sendBalanceChangeNotification(sender,receiver, "BALANCE_CHANGE", mess, money, this);
 				}
 			}
 		} catch (Exception e) {
@@ -169,6 +188,10 @@ public class ClientHandler extends Thread{
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private boolean isValidReceiver(String receiver) {
+		return new ClientBUS().isValidReceiver(receiver);
 	}
 
 	private void sendName() {
@@ -221,5 +244,12 @@ public class ClientHandler extends Thread{
 		sendCheckingAccountInfo();
 		sendSavingAccountInfo();
 		this.writer.println(message);
+	}
+
+	public void sendBalanceChangeNotification(String sender, String receiver, String description, double money) {
+		sendCheckingAccountInfo();
+		sendSavingAccountInfo();
+		sendIncomeAndExpense();
+		this.writer.println("TRANSFER:"+sender+"_"+receiver+"_"+money+"_"+description);
 	}
 }

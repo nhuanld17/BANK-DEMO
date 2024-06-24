@@ -209,4 +209,21 @@ public class ClientDAO {
 		
 		return null;
 	}
+
+	public boolean isValidReceiver(String receiver) {
+		String query = "SELECT fullname FROM fk_bank.clients WHERE payee_name = '"+receiver+"'";
+		try {
+			ResultSet resultSet = new DBcon().queryDB(query);
+			
+			if (resultSet.next()) {
+				return true;
+			}
+			
+			return false;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
 }
