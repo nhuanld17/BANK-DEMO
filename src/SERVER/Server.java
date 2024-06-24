@@ -105,4 +105,12 @@ public class Server {
 	public static void main(String[] args) throws IOException {
 		new Server();
 	}
+
+	public static void sendTransferNotification(String payeeName, String message, ClientHandler sender) {
+		for (ClientHandler client : clients.values()) {
+			if (client != sender && client.getUsername().equals(payeeName)) {
+				client.sendTransferNotification(message);
+			}
+		}
+	}
 }

@@ -32,6 +32,18 @@ public class ClientHandler extends Thread{
 		start();
 	}
 	
+	public String getUsername() {
+		return username;
+	}
+
+
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+
+
 	@Override
 	public void run() {
 		try {
@@ -114,8 +126,8 @@ public class ClientHandler extends Thread{
 					double amount = Double.valueOf(infos[1]);
 					
 					new CheckingAccountBUS().adminTransferToCheckingAcc(payeeName, amount);
-					
-					// Gửi tin nhắn cho client để cập nhật
+					Server.sendTransferNotification(payeeName, "SYSTEM_TRANSFER_CHECKING:"+amount, this);
+
 				} else if (message.startsWith("TRANSFER_SAVING:")) {
 					String info = message.substring(16);
 					String[] infos = info.split("_");
@@ -123,6 +135,7 @@ public class ClientHandler extends Thread{
 					double amount = Double.valueOf(infos[1]);
 					
 					new SavingAccountBUS().adminTransferToSavingAccount(payeeName, amount);
+					
 				} else if (message.startsWith("FUNTTOSAVING:")) {
 					String info = message.substring(13);
 					String[] infos = info.split("_");
@@ -202,5 +215,11 @@ public class ClientHandler extends Thread{
 		Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
 		
 		return pattern.matcher(normalized).replaceAll("").replace('đ', 'd').replace('Đ', 'D');
+	}
+
+	public void sendTransferNotification(String message) {
+		sendCheckingAccountInfo();
+		sendSavingAccountInfo();
+		this.writer.println(message);
 	}
 }

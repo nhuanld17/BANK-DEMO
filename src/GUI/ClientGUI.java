@@ -792,7 +792,12 @@ public class ClientGUI extends JFrame {
 						this.expense = Double.valueOf(infos[1]);
 						incomeLabel.setText("$ "+this.income);
 						expenseLabel.setText("$ "+this.expense);
-						
+					}
+					
+					if (message.startsWith("SYSTEM_TRANSFER_CHECKING:")) {
+						double money = Double.valueOf(message.substring(25));
+						JOptionPane.showMessageDialog(null, "Admin transfered "+ money +"$ to your checking account");
+						tabbedPane.setSelectedIndex(2);
 					}
 				}
 			} catch (IOException e) {
