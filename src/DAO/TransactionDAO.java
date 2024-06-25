@@ -1,8 +1,9 @@
 package DAO;
 
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class TransactionDAO {
 
@@ -63,5 +64,29 @@ public class TransactionDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public String getListHistoryTransaction(String username) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		String list = "";
+		String query = "SELECT * FROM fk_bank.transaction_history WHERE sender = '"+username+"' OR receiver = '"+username+"'"
+				+ " ORDER BY time DESC;";
+		try {
+			ResultSet resultSet = new DBcon().queryDB(query);
+			while (resultSet.next()) {
+				Date time = resultSet.getDate("time");
+				String sender = resultSet.getString("sender");
+				String receiver = resultSet.getString("receiver");
+				String message = resultSet.getString("message");
+				double money = resultSet.getDouble("amount");
+				list += dateFormat.format(time)+"_"+sender+"_"+receiver+"_"+message+"_"+money+"__";
+			}
+			
+			return list;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

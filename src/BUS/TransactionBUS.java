@@ -12,4 +12,8 @@ public class TransactionBUS {
 		new TransactionDAO().saveTransactionHistory(sender, receiver, money, mess);
 	}
 
+	public String getListHistoryTransaction(String username) {
+		return new TransactionDAO().getListHistoryTransaction(username);
+	}
+
 }

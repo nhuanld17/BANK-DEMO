@@ -60,6 +60,7 @@ public class ClientHandler extends Thread{
 				sendCheckingAccountInfo();
 				sendSavingAccountInfo();
 				sendIncomeAndExpense();
+				sendHistoryTransactionList();
 			}
 			while (true) {
 				String message = reader.readLine();
@@ -173,6 +174,11 @@ public class ClientHandler extends Thread{
 					
 					// Gửi thông báo cho người nhận và gửi info tk thanh toán, vị thu vị chi
 					Server.sendBalanceChangeNotification(sender,receiver, "BALANCE_CHANGE", mess, money, this);
+					
+					// cập nhật lịch sử giao dịch cho người gửi
+					sendHistoryTransactionList();
+					
+					// TODO: Sau mỗi lần giao dịch, cập nhật bảng lịch sử giao dịch bên admin
 				}
 			}
 		} catch (Exception e) {
@@ -188,6 +194,11 @@ public class ClientHandler extends Thread{
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private void sendHistoryTransactionList() {
+		String list = "LIST_TRANSACTION:" + new TransactionBUS().getListHistoryTransaction(this.username);
+		this.writer.println(list);
 	}
 
 	private boolean isValidReceiver(String receiver) {
@@ -250,6 +261,7 @@ public class ClientHandler extends Thread{
 		sendCheckingAccountInfo();
 		sendSavingAccountInfo();
 		sendIncomeAndExpense();
+		sendHistoryTransactionList();
 		this.writer.println("TRANSFER:"+sender+"_"+receiver+"_"+money+"_"+description);
 	}
 }

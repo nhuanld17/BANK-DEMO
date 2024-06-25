@@ -2,6 +2,7 @@ package GUI;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
@@ -11,9 +12,11 @@ import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.ImageIcon;
@@ -26,7 +29,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import COMPONENT.RoundedPanel;
@@ -80,6 +85,18 @@ public class ClientGUI extends JFrame {
 	private RoundedTextField receiverAddressTextField;
 	private RoundedTextField amountMoneyTextField;
 	private JTextArea messageTextArea;
+	private ArrayList<String[]> historyList = new ArrayList<String[]>();
+	private JPanel listTransactionPanel;
+	private JLabel[] timeLabel;
+	private JLabel[] senderLabel;
+	private JLabel[] receiverLabel;
+	private JLabel[] amountLabel;
+	private JPanel transactionHistoryPanel;
+	private JLabel[] timeLabel1;
+	private JLabel[] senderLabel1;
+	private JLabel[] receiverLabel1;
+	private JLabel[] amountLabel1;
+	private JLabel[] messageLabel;;
 
 	public ClientGUI(String payeeName, Socket socket, PrintWriter writer, BufferedReader reader) {
 		setResizable(false);
@@ -473,15 +490,71 @@ public class ClientGUI extends JFrame {
 		transactionLimitLabel_1.setBounds(656, 602, 233, 34);
 		dashboardPanel.add(transactionLimitLabel_1);
 		
-		JPanel listTransactionPanel = new JPanel();
+		listTransactionPanel = new JPanel();
 		listTransactionPanel.setBackground(new Color(80, 71, 75));
 		listTransactionPanel.setBounds(26, 333, 627, 303);
 		listTransactionPanel.setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane(listTransactionPanel);
+		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+
 		scrollPane.setBorder(null);
-		scrollPane.setBounds(26, 333, 627, 303);
+		scrollPane.setBounds(26, 333, 619, 303);
 		dashboardPanel.add(scrollPane);
+		
+		
+		  // Thử thêm item là lịch sử giao dịch 
+			/*
+			 * RoundedPanel itemHistory = new RoundedPanel(12, 0, Color.gray);
+			 * itemHistory.setBounds(10, 11, 599, 48); itemHistory.setBackground(new
+			 * Color(202, 202, 202)); listTransactionPanel.add(itemHistory);
+			 * itemHistory.setLayout(null);
+			 * 
+			 * // Thêm ngày giao dịch vào item JLabel timeTransactionLabel = new
+			 * JLabel("20/10/2005");
+			 * timeTransactionLabel.setHorizontalAlignment(SwingConstants.CENTER);
+			 * timeTransactionLabel.setForeground(SystemColor.desktop);
+			 * timeTransactionLabel.setFont(new Font("Heebo", Font.PLAIN, 18));
+			 * timeTransactionLabel.setBounds(3, 4, 100, 41);
+			 * itemHistory.add(timeTransactionLabel);
+			 * 
+			 * // Thêm JSeperator vào item JSeparator separator_3 = new JSeparator();
+			 * separator_3.setForeground(SystemColor.desktop);
+			 * separator_3.setBackground(SystemColor.desktop);
+			 * separator_3.setOrientation(SwingConstants.VERTICAL);
+			 * separator_3.setBounds(113, 5, 1, 37); itemHistory.add(separator_3);
+			 * 
+			 * JLabel senderLabel = new JLabel("ldnhuan147");
+			 * senderLabel.setHorizontalAlignment(SwingConstants.CENTER);
+			 * senderLabel.setForeground(new Color(85, 104, 17)); senderLabel.setFont(new
+			 * Font("Heebo", Font.BOLD, 18)); senderLabel.setBounds(120, 8, 126, 31);
+			 * itemHistory.add(senderLabel);
+			 * 
+			 * JLabel iconLabel = new JLabel(""); iconLabel.setIcon(new
+			 * ImageIcon(ClientGUI.class.getResource("/icon/icons8-right-arrow-40.png")));
+			 * iconLabel.setBounds(257, 7, 40, 33); itemHistory.add(iconLabel);
+			 * 
+			 * JLabel receiverLable = new JLabel("ldnhuan147");
+			 * receiverLable.setHorizontalAlignment(SwingConstants.CENTER);
+			 * receiverLable.setForeground(SystemColor.desktop); receiverLable.setFont(new
+			 * Font("Heebo", Font.PLAIN, 18)); receiverLable.setBounds(310, 8, 132, 31);
+			 * itemHistory.add(receiverLable);
+			 * 
+			 * JSeparator separator_3_1 = new JSeparator();
+			 * separator_3_1.setOrientation(SwingConstants.VERTICAL);
+			 * separator_3_1.setForeground(SystemColor.desktop);
+			 * separator_3_1.setBackground(SystemColor.desktop);
+			 * separator_3_1.setBounds(446, 5, 1, 37); itemHistory.add(separator_3_1);
+			 * 
+			 * JLabel amountLabel = new JLabel("$ 100");
+			 * amountLabel.setHorizontalAlignment(SwingConstants.CENTER);
+			 * amountLabel.setForeground(SystemColor.desktop); amountLabel.setFont(new
+			 * Font("Heebo", Font.PLAIN, 18)); amountLabel.setBounds(457, 8, 132, 31);
+			 * itemHistory.add(amountLabel);
+			 */
+		 
 		
 		JLabel lblNewLabel_2_3 = new JLabel("History");
 		lblNewLabel_2_3.setForeground(new Color(155, 160, 164));
@@ -524,16 +597,78 @@ public class ClientGUI extends JFrame {
 		lblNewLabel_9.setBounds(24, 8, 203, 36);
 		transactionPanel.add(lblNewLabel_9);
 		
-		JPanel transactionHistoryPanel = new JPanel();
+		transactionHistoryPanel = new JPanel();
 		transactionHistoryPanel.setBackground(new Color(80, 71, 75));
 		transactionHistoryPanel.setBounds(24, 46, 845, 339);
 		transactionHistoryPanel.setLayout(null);
 		
 		JScrollPane scrollPane_1 = new JScrollPane(transactionHistoryPanel);
+		scrollPane_1.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+		scrollPane_1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane_1.getVerticalScrollBar().setUnitIncrement(16);
 		scrollPane_1.setBorder(null);
 		scrollPane_1.setBounds(24, 46, 845, 339);
 		transactionPanel.add(scrollPane_1);
-		
+		/*
+		 * // Thêm item vào trang transaction RoundedPanel itemHistory = new
+		 * RoundedPanel(0, 0, (Color) null); itemHistory.setBounds(10, 11, 825, 48);
+		 * transactionHistoryPanel.add(itemHistory); itemHistory.setLayout(null);
+		 * 
+		 * // Thêm thời gian JLabel time = new JLabel("28/10/2005"); time.setFont(new
+		 * Font("Heebo", Font.PLAIN, 18)); time.setForeground(SystemColor.desktop);
+		 * time.setHorizontalAlignment(SwingConstants.CENTER); time.setBounds(2, 8, 118,
+		 * 32); itemHistory.add(time);
+		 * 
+		 * // Thêm JSeperator JSeparator separator_3 = new JSeparator();
+		 * separator_3.setForeground(SystemColor.desktop);
+		 * separator_3.setBackground(SystemColor.desktop);
+		 * separator_3.setOrientation(SwingConstants.VERTICAL);
+		 * separator_3.setBounds(122, 5, 1, 37); itemHistory.add(separator_3);
+		 * 
+		 * // Thêm Sender JLabel SenderLabel = new JLabel("ldnhuan147");
+		 * SenderLabel.setForeground(new Color(85, 104, 17));
+		 * SenderLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		 * SenderLabel.setFont(new Font("Heebo", Font.BOLD, 18));
+		 * SenderLabel.setBounds(125, 9, 129, 29); itemHistory.add(SenderLabel);
+		 * 
+		 * // Thêm Icon JLabel iconLabel = new JLabel("");
+		 * iconLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		 * iconLabel.setIcon(new
+		 * ImageIcon(ClientGUI.class.getResource("/icon/icons8-right-arrow-40.png")));
+		 * iconLabel.setBounds(258, 9, 45, 29); itemHistory.add(iconLabel);
+		 * 
+		 * // Thêm Receiver JLabel ReceiverLabel = new JLabel("ldnhuan147");
+		 * ReceiverLabel.setForeground(SystemColor.desktop);
+		 * ReceiverLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		 * ReceiverLabel.setFont(new Font("Heebo", Font.PLAIN, 18));
+		 * ReceiverLabel.setBounds(315, 8, 139, 29); itemHistory.add(ReceiverLabel);
+		 * 
+		 * // Thêm JSeperator JSeparator separator_3_1 = new JSeparator();
+		 * separator_3_1.setOrientation(SwingConstants.VERTICAL);
+		 * separator_3_1.setForeground(SystemColor.desktop);
+		 * separator_3_1.setBackground(SystemColor.desktop);
+		 * separator_3_1.setBounds(464, 5, 1, 37); itemHistory.add(separator_3_1);
+		 * 
+		 * // Thêm tin nhắn JLabel messageLabel = new JLabel("New label");
+		 * messageLabel.setFont(new Font("Heebo", Font.PLAIN, 18));
+		 * messageLabel.setForeground(new Color(17, 29, 34));
+		 * messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		 * messageLabel.setBounds(468, 9, 222, 30); itemHistory.add(messageLabel);
+		 * 
+		 * // Thêm JSeperator JSeparator separator_3_2 = new JSeparator();
+		 * separator_3_2.setOrientation(SwingConstants.VERTICAL);
+		 * separator_3_2.setForeground(SystemColor.desktop);
+		 * separator_3_2.setBackground(SystemColor.desktop);
+		 * separator_3_2.setBounds(694, 5, 1, 37); itemHistory.add(separator_3_2);
+		 * 
+		 * // Thêm amount JLabel lblNewLabel_10 = new JLabel("$ 100");
+		 * lblNewLabel_10.setFont(new Font("Heebo", Font.PLAIN, 18));
+		 * lblNewLabel_10.setForeground(new Color(200, 100, 0));
+		 * lblNewLabel_10.setHorizontalAlignment(SwingConstants.CENTER);
+		 * lblNewLabel_10.setBounds(700, 9, 115, 29); itemHistory.add(lblNewLabel_10);
+		 * 
+		 * //=======================================================
+		 */
 		JLabel lblNewLabel_9_1 = new JLabel("Receiver address");
 		lblNewLabel_9_1.setForeground(SystemColor.window);
 		lblNewLabel_9_1.setFont(new Font("Heebo", Font.PLAIN, 18));
@@ -565,6 +700,7 @@ public class ClientGUI extends JFrame {
 		transactionPanel.add(lblNewLabel_9_1_1_1);
 		
 		messageTextArea = new JTextArea();
+		messageTextArea.setForeground(SystemColor.desktop);
 		messageTextArea.setLineWrap(true);
 		messageTextArea.setWrapStyleWord(true);
 		messageTextArea.setFont(new Font("Heebo", Font.PLAIN, 18));
@@ -875,6 +1011,31 @@ public class ClientGUI extends JFrame {
 						expenseLabel.setText("$ "+this.expense);
 					}
 					
+					if (message.startsWith("LIST_TRANSACTION:")) {
+						String list = message.substring(17); // Lấy chuỗi data
+						String[] lists = list.split("__");
+						historyList.clear();
+						for (String lisst : lists) {
+							String[] listInfo = lisst.split("_");
+							historyList.add(listInfo);
+						}
+						
+					    try {
+							SwingUtilities.invokeAndWait(new Runnable() {
+							    public void run() {
+							    	addItemInDashBoard();
+							    	addItemInTransactionTab();
+							    }
+							});
+						} catch (InvocationTargetException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					
 					if (message.startsWith("SYSTEM_TRANSFER_CHECKING:")) {
 						double money = Double.valueOf(message.substring(25));
 						JOptionPane.showMessageDialog(null, "Admin transfered "+ money +"$ to your checking account");
@@ -895,7 +1056,7 @@ public class ClientGUI extends JFrame {
 						String info = message.substring(9);
 						String[] infos = info.split("_");
 						String sender = infos[0];
-						String receiver = infos[1];
+//						String receiver = infos[1];
 						double money = Double.valueOf(infos[2]);
 						String description = infos[3];
 						
@@ -912,6 +1073,219 @@ public class ClientGUI extends JFrame {
 			}
 		});
 		listen.start();
+	}
+
+	protected void addItemInTransactionTab() {
+		transactionHistoryPanel.removeAll();
+		
+		RoundedPanel[] item = new RoundedPanel[historyList.size()]; 
+		timeLabel1 = new JLabel[historyList.size()];
+		senderLabel1 = new JLabel[historyList.size()];
+		receiverLabel1 = new JLabel[historyList.size()];
+		messageLabel = new JLabel[historyList.size()];
+		amountLabel1 = new JLabel[historyList.size()];
+		
+		int x = 10, y = 10, width = 825, height = 48;
+		
+		for (int i = 0; i < historyList.size(); i++) {
+			item[i] = new RoundedPanel(12, 0, Color.gray);
+			item[i].setBackground(new Color(202, 202, 202));
+			item[i].setBounds(x, y, width, height);
+			item[i].setLayout(null);
+			
+			y += height + 10;
+			
+			// Thêm thời gian
+			timeLabel1[i] = new JLabel();
+			timeLabel1[i].setText(historyList.get(i)[0]);
+			timeLabel1[i].setBounds(2, 8, 118, 32);
+			timeLabel1[i].setFont(new Font("Heebo", Font.PLAIN, 18));
+			timeLabel1[i].setForeground(SystemColor.desktop);
+			timeLabel1[i].setHorizontalAlignment(SwingConstants.CENTER);
+			item[i].add(timeLabel1[i]);
+			
+			JSeparator separator = new JSeparator();
+			separator.setForeground(SystemColor.desktop);
+			separator.setBackground(SystemColor.desktop);
+			separator.setOrientation(SwingConstants.VERTICAL);
+			separator.setBounds(122, 5, 1, 37);
+			item[i].add(separator);
+			
+			senderLabel1[i] = new JLabel();
+			senderLabel1[i].setText(historyList.get(i)[1]);
+//			senderLabel1[i].setForeground(new Color(85, 104, 17));
+			if(historyList.get(i)[1].equals(this.payeeName)) {
+				senderLabel1[i].setForeground(new Color(85, 104, 17));
+			} else {
+				senderLabel1[i].setForeground(new Color(SystemColor.DESKTOP));
+			}
+			senderLabel1[i].setHorizontalAlignment(SwingConstants.CENTER);
+			senderLabel1[i].setFont(new Font("Heebo", Font.BOLD, 18));
+			senderLabel1[i].setBounds(125, 9, 129, 29);
+			item[i].add(senderLabel1[i]);
+			
+			JLabel iconLabel = new JLabel("");
+			iconLabel.setHorizontalAlignment(SwingConstants.CENTER);
+			iconLabel.setIcon(new ImageIcon(ClientGUI.class.getResource("/icon/icons8-right-arrow-40.png")));
+			iconLabel.setBounds(258, 9, 45, 29);
+			item[i].add(iconLabel);
+			
+			receiverLabel1[i] = new JLabel();
+			receiverLabel1[i].setText(historyList.get(i)[2]);
+//			receiverLabel1[i].setForeground(SystemColor.desktop);
+			if(historyList.get(i)[2].equals(this.payeeName)) {
+				receiverLabel1[i].setForeground(new Color(85, 104, 17));
+			} else {
+				receiverLabel1[i].setForeground(new Color(SystemColor.DESKTOP));
+			}
+			receiverLabel1[i].setHorizontalAlignment(SwingConstants.CENTER);
+			receiverLabel1[i].setFont(new Font("Heebo", Font.BOLD, 18));
+			receiverLabel1[i].setBounds(315, 8, 139, 29);
+			item[i].add(receiverLabel1[i]);
+			
+			JSeparator separator2 = new JSeparator();
+			separator2.setOrientation(SwingConstants.VERTICAL);
+			separator2.setForeground(SystemColor.desktop);
+			separator2.setBackground(SystemColor.desktop);
+			separator2.setBounds(464, 5, 1, 37);
+			item[i].add(separator2);
+			
+			messageLabel[i] = new JLabel();
+			messageLabel[i].setText(historyList.get(i)[3]);
+			messageLabel[i].setToolTipText(historyList.get(i)[3]);
+			messageLabel[i].setFont(new Font("Heebo", Font.PLAIN, 18));
+			messageLabel[i].setForeground(new Color(17, 29, 34));
+			messageLabel[i].setHorizontalAlignment(SwingConstants.CENTER);
+			messageLabel[i].setBounds(468, 9, 222, 30);
+			item[i].add(messageLabel[i]);
+			
+			JSeparator separator3 = new JSeparator();
+			separator3.setOrientation(SwingConstants.VERTICAL);
+			separator3.setForeground(SystemColor.desktop);
+			separator3.setBackground(SystemColor.desktop);
+			separator3.setBounds(694, 5, 1, 37);
+			item[i].add(separator3);
+			
+			amountLabel1[i] = new JLabel();
+			amountLabel1[i].setText("$ "+historyList.get(i)[4]);
+			amountLabel1[i].setFont(new Font("Heebo", Font.BOLD, 18));
+			amountLabel1[i].setForeground(new Color(200, 100, 0));
+			amountLabel1[i].setHorizontalAlignment(SwingConstants.CENTER);
+			amountLabel1[i].setBounds(700, 9, 115, 29);
+			item[i].add(amountLabel1[i]);
+			
+			transactionHistoryPanel.add(item[i]);
+			transactionHistoryPanel.revalidate();
+			transactionHistoryPanel.repaint();
+		}
+		
+		int size = historyList.size();
+		transactionHistoryPanel.setPreferredSize(new Dimension(845, (10 + size*height + (size-1)*10 + 10)));
+	}
+
+	protected void addItemInDashBoard() {
+		for (String[] history : historyList) {
+			for (String info : history) {
+				System.out.print(info+" ");
+			}
+			System.out.println();
+		}
+		
+		listTransactionPanel.removeAll();
+		
+		RoundedPanel[] item = new RoundedPanel[historyList.size()]; 
+		timeLabel = new JLabel[historyList.size()];
+		senderLabel = new JLabel[historyList.size()];
+		receiverLabel = new JLabel[historyList.size()];
+		amountLabel = new JLabel[historyList.size()];
+		
+		int x = 10, y = 10, width = 599, height = 48;
+		
+		for (int i = 0; i < historyList.size(); i++) {
+			item[i] = new RoundedPanel(12, 0, Color.gray);
+			item[i].setBackground(new Color(202, 202, 202));
+			item[i].setBounds(x, y, width, height);
+			item[i].setLayout(null);
+			
+			y += height + 10;
+			
+			// Thêm thời gian
+			timeLabel[i] = new JLabel();
+			timeLabel[i].setText(historyList.get(i)[0]);
+			timeLabel[i].setBounds(3, 4, 100, 41);
+			timeLabel[i].setFont(new Font("Heebo", Font.PLAIN, 18));
+			timeLabel[i].setForeground(SystemColor.desktop);
+			timeLabel[i].setHorizontalAlignment(SwingConstants.CENTER);
+			item[i].add(timeLabel[i]);
+			
+			
+			// Thêm JSeperator
+			JSeparator separator = new JSeparator();
+			separator.setForeground(SystemColor.desktop);
+			separator.setBackground(SystemColor.desktop);
+			separator.setOrientation(SwingConstants.VERTICAL);
+			separator.setBounds(113, 5, 1, 37); 
+			item[i].add(separator);
+			
+			// Thêm tên người gửi
+			senderLabel[i] = new JLabel();
+			senderLabel[i].setText(historyList.get(i)[1]);
+			senderLabel[i].setHorizontalAlignment(SwingConstants.CENTER);
+//			senderLabel[i].setForeground(new Color(85, 104, 17));
+			if(historyList.get(i)[1].equals(this.payeeName)) {
+				senderLabel[i].setForeground(new Color(85, 104, 17));
+			} else {
+				senderLabel[i].setForeground(SystemColor.desktop); 
+			}
+			senderLabel[i].setFont(new Font("Heebo", Font.BOLD, 18));
+			senderLabel[i].setBounds(120, 8, 126, 31);
+			item[i].add(senderLabel[i]);
+			
+			// Thêm icon
+			JLabel iconLabel = new JLabel(""); 
+			iconLabel.setIcon(new ImageIcon(ClientGUI.class.getResource("/icon/icons8-right-arrow-40.png")));
+			iconLabel.setBounds(257, 7, 40, 33); 
+			item[i].add(iconLabel);
+			
+			// Thêm tên người nhận
+			receiverLabel[i] = new JLabel();
+			receiverLabel[i].setText(historyList.get(i)[2]);
+			receiverLabel[i].setHorizontalAlignment(SwingConstants.CENTER);
+//			receiverLabel[i].setForeground(SystemColor.desktop); 
+			if(historyList.get(i)[2].equals(payeeName)) {
+				receiverLabel[i].setForeground(new Color(85, 104, 17));
+			} else {
+				receiverLabel[i].setForeground(SystemColor.desktop); 
+			}
+			receiverLabel[i].setFont(new Font("Heebo", Font.BOLD, 18)); 
+			receiverLabel[i].setBounds(310, 8, 132, 31);
+			item[i].add(receiverLabel[i]);
+			
+			// Thêm JSeperator
+			JSeparator separator2 = new JSeparator();
+			separator2.setOrientation(SwingConstants.VERTICAL);
+			separator2.setOrientation(SwingConstants.VERTICAL);
+			separator2.setForeground(SystemColor.desktop);
+			separator2.setBackground(SystemColor.desktop);
+			separator2.setBounds(446, 5, 1, 37); 
+			item[i].add(separator2);
+			
+			// Thêm Label cho số tiền
+			amountLabel[i] = new JLabel();
+			amountLabel[i].setText("$ "+historyList.get(i)[4]);
+			amountLabel[i].setHorizontalAlignment(SwingConstants.CENTER);
+			amountLabel[i].setForeground(new Color(200, 100, 0)); 
+			amountLabel[i].setFont(new Font("Heebo", Font.BOLD, 18)); 
+			amountLabel[i].setBounds(457, 8, 132, 31);
+			item[i].add(amountLabel[i]);
+			
+			listTransactionPanel.add(item[i]);
+			listTransactionPanel.revalidate();
+			listTransactionPanel.repaint();
+		}
+		
+		int size = historyList.size();
+		listTransactionPanel.setPreferredSize(new Dimension(627, (10 + size*height + (size-1)*10 + 10)));
 	}
 
 	protected void transferMoney() {
