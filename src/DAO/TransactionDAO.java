@@ -89,4 +89,48 @@ public class TransactionDAO {
 		}
 		return null;
 	}
+
+	public String getAllHistoryTransaction() {
+		String list = "";
+		String query = "SELECT * FROM fk_bank.transaction_history ORDER BY time DESC";
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		try {
+			ResultSet resultSet = new DBcon().queryDB(query);
+			while (resultSet.next()) {
+				Date time = resultSet.getDate("time");
+				String sender = resultSet.getString("sender");
+				String receiver = resultSet.getString("receiver");
+				String message = resultSet.getString("message");
+				double amount = resultSet.getDouble("amount");
+				
+				list += simpleDateFormat.format(time)+"_"+sender+"_"+receiver+"_"+message+"_"+amount+"__";
+			}
+			
+			return list;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+
+	public int getTotalTransaction() {
+		int total = 0;
+		String query = "SELECT COUNT(*) FROM fk_bank.transaction_history";
+		
+		try {
+			ResultSet resultSet = new DBcon().queryDB(query);
+			while (resultSet.next()) {
+				total = resultSet.getInt("COUNT(*)");
+			}
+			
+			return total;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return total;
+	}
+
 }

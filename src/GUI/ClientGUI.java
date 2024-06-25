@@ -1298,6 +1298,11 @@ public class ClientGUI extends JFrame {
 			return;
 		}
 		
+		if (receiver.equals(this.payeeName)) {
+			JOptionPane.showMessageDialog(null, "Receicer is another payee address, not your");
+			return;
+		}
+		
 		double money = 0;
 		try {
 			money = Double.valueOf(moneyString);

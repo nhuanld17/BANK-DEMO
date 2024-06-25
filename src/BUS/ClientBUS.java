@@ -50,4 +50,8 @@ public class ClientBUS {
 		return new ClientDAO().isValidReceiver(receiver);
 	}
 
+	public int getTotalClient() {
+		return new ClientDAO().getTotalClient();
+	}
+
 }

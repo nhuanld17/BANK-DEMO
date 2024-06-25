@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import BUS.AccountBUS;
 import BUS.ClientBUS;
@@ -120,6 +121,22 @@ public class Server {
 			// TODO: Gửi thông báo cho người nhận
 			if (client != clientSender && client.getUsername().equals(receiver)) {
 				client.sendBalanceChangeNotification(sender, receiver, description, money);
+			}
+		}
+	}
+
+	public static void updateTransactionHistoryForAdmin() {
+		for (ClientHandler client : clients.values()) {
+			if (client.getUsername().equals("admin")) {
+				client.sendHistoryTransaction();
+			}
+		}
+	}
+
+	public static void updateTotalofClientAndTransaction() {
+		for (ClientHandler client : clients.values()) {
+			if (client.getUsername().equals("admin")) {
+				client.sendTotalOfClientAndTransaction();
 			}
 		}
 	}

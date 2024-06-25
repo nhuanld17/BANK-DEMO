@@ -226,4 +226,22 @@ public class ClientDAO {
 		}
 		return false;
 	}
+
+	public int getTotalClient() {
+		int total = 0;
+		String query = "SELECT COUNT(*) FROM fk_bank.clients";
+		
+		try {
+			ResultSet resultSet = new DBcon().queryDB(query);
+			while (resultSet.next()) {
+				total = resultSet.getInt("COUNT(*)");
+			}
+			
+			return total;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return total;
+	}
 }

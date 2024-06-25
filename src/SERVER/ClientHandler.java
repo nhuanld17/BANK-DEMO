@@ -54,6 +54,8 @@ public class ClientHandler extends Thread{
 			if (this.username.equals("admin")) {
 				sendListPayeeName();
 				sendListUser();
+				sendListTransactionHistory();
+				sendTotalTransactionAndTotalClient();
 			}else {
 				sendName();
 				sendDateCreated();
@@ -87,6 +89,7 @@ public class ClientHandler extends Thread{
 					
 					sendListPayeeName();
 					sendListUser();
+					sendTotalOfClientAndTransaction();
 				} else if (message.startsWith("SEARCH:")) {
 					System.out.println("CLIENT_REQUEST:SEARCH");
 					String payeeName = message.substring(7);
@@ -107,12 +110,15 @@ public class ClientHandler extends Thread{
 					new ClientBUS().updateClientInfo(newFullName, newEmail, newPayeeName, oldPayeeName);
 					sendListPayeeName();
 					sendListUser();
+					sendListTransactionHistory();
 				} else if (message.startsWith("DELETE_CLIENT:")) {
 					String payeeName = message.substring(14);
 					
 					new ClientBUS().deleteClient(payeeName);
 					sendListPayeeName();
 					sendListUser();
+					sendListTransactionHistory();
+					sendTotalOfClientAndTransaction();
 				} else if (message.startsWith("SEARCH_IN_TRANSACTION:")) {
 					System.out.println(message);
 					String payeeName = message.substring(22);
@@ -170,6 +176,7 @@ public class ClientHandler extends Thread{
 					new TransactionBUS().saveTransactionHistory(sender, receiver, money, mess);
 					// Gửi info của tài khoản thanh toán và vị chi , vị thu cho người gửi
 					sendCheckingAccountInfo();
+					sendSavingAccountInfo();
 					sendIncomeAndExpense();
 					
 					// Gửi thông báo cho người nhận và gửi info tk thanh toán, vị thu vị chi
@@ -179,6 +186,10 @@ public class ClientHandler extends Thread{
 					sendHistoryTransactionList();
 					
 					// TODO: Sau mỗi lần giao dịch, cập nhật bảng lịch sử giao dịch bên admin
+					Server.updateTransactionHistoryForAdmin();
+					Server.updateTotalofClientAndTransaction();
+				} else {
+					
 				}
 			}
 		} catch (Exception e) {
@@ -194,6 +205,16 @@ public class ClientHandler extends Thread{
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private void sendTotalTransactionAndTotalClient() {
+		String mess = "TOTALTRANSACTANDTOTALCLIENT:" + new TransactionBUS().getTotalTransaction() +"_" + new ClientBUS().getTotalClient();
+		this.writer.println(mess);
+	}
+
+	private void sendListTransactionHistory() {
+		String list = "ALL_TRANSACTION:" + new TransactionBUS().getAllTransactionHistory();
+		this.writer.println(list);
 	}
 
 	private void sendHistoryTransactionList() {
@@ -263,5 +284,13 @@ public class ClientHandler extends Thread{
 		sendIncomeAndExpense();
 		sendHistoryTransactionList();
 		this.writer.println("TRANSFER:"+sender+"_"+receiver+"_"+money+"_"+description);
+	}
+
+	public void sendHistoryTransaction() {
+		sendListTransactionHistory();
+	}
+
+	public void sendTotalOfClientAndTransaction() {
+		sendTotalTransactionAndTotalClient();
 	}
 }

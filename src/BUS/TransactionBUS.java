@@ -16,4 +16,12 @@ public class TransactionBUS {
 		return new TransactionDAO().getListHistoryTransaction(username);
 	}
 
+	public String getAllTransactionHistory() {
+		return new TransactionDAO().getAllHistoryTransaction();
+	}
+
+	public int getTotalTransaction() {
+		return new TransactionDAO().getTotalTransaction();
+	}
+
 }
