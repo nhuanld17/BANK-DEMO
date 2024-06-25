@@ -140,4 +140,12 @@ public class Server {
 			}
 		}
 	}
+
+	public static void updateChartDataForAdmin() {
+		for (ClientHandler client : clients.values()) {
+			if (client.getUsername().equals("admin")) {
+				client.sendChartData();
+			}
+		}
+	}
 }

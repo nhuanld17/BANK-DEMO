@@ -24,4 +24,8 @@ public class TransactionBUS {
 		return new TransactionDAO().getTotalTransaction();
 	}
 
+	public String getChartData() {
+		return new TransactionDAO().getChartData();
+	}
+
 }

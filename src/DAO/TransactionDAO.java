@@ -3,6 +3,8 @@ package DAO;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class TransactionDAO {
@@ -131,6 +133,37 @@ public class TransactionDAO {
 			e.printStackTrace();
 		}
 		return total;
+	}
+
+	public String getChartData() {
+		String data = "";
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		LocalDate currentDate = LocalDate.now();
+		LocalDate[] date = new LocalDate[7];
+		
+		LocalDate start = currentDate.minusDays(6);
+		double[] amount = new double[7];
+		for (int i = 0; i < 7; i++) {
+			date[i] = start.plusDays(i);
+		}
+		
+		for (int i = 0; i < date.length; i++) {
+			String query = "SELECT SUM(amount) FROM fk_bank.transaction_history WHERE DATE(time) = '"+date[i]+"'";
+			
+			try {
+				ResultSet resultSet = new DBcon().queryDB(query);
+				if (resultSet.next()) {
+					amount[i] = resultSet.getDouble("SUM(amount)");
+				}
+				
+				data += formatter.format(date[i]) + "_" + amount[i] +"__";
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		return data;
 	}
 
 }

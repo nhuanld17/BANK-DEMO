@@ -56,6 +56,7 @@ public class ClientHandler extends Thread{
 				sendListUser();
 				sendListTransactionHistory();
 				sendTotalTransactionAndTotalClient();
+				sendChartData();
 			}else {
 				sendName();
 				sendDateCreated();
@@ -76,10 +77,12 @@ public class ClientHandler extends Thread{
 				} else if (message.startsWith("CREATECLIENT")) {
 					System.out.println(message);
 					String[] infos = message.split("_");
+					
 					String clientFullName = infos[1];
 					String email = infos[2];
 					String payeeAddress = infos[3];
 					String password = infos[4];
+					
 					double checkingInit = Double.valueOf(infos[5]);
 					double savingInit = Double.valueOf(infos[6]);
 					
@@ -188,6 +191,7 @@ public class ClientHandler extends Thread{
 					// TODO: Sau mỗi lần giao dịch, cập nhật bảng lịch sử giao dịch bên admin
 					Server.updateTransactionHistoryForAdmin();
 					Server.updateTotalofClientAndTransaction();
+					Server.updateChartDataForAdmin();
 				} else {
 					
 				}
@@ -205,6 +209,11 @@ public class ClientHandler extends Thread{
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public void sendChartData() {
+		String data = "CHART_DATA:" + new TransactionBUS().getChartData();
+		this.writer.println(data);
 	}
 
 	private void sendTotalTransactionAndTotalClient() {

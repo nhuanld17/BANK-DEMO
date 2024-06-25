@@ -20,6 +20,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.ImageIcon;
@@ -37,6 +40,14 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 import COMPONENT.RoundedPanel;
 import COMPONENT.RoundedTextField;
@@ -96,7 +107,8 @@ public class AdminGUI extends JFrame {
 	private Integer totalClient;
 	private JPanel charrtPanel;
 	private JLabel totalClientLabel;
-	private JLabel totalTransactionLabel;;
+	private JLabel totalTransactionLabel;
+	HashMap<String, Double> chartData = new HashMap<String, Double>();
 	
 	
 	public static void main(String[] args) {
@@ -723,6 +735,18 @@ public class AdminGUI extends JFrame {
 						
 					}
 					
+					if (message.startsWith("CHART_DATA:")) {
+						String info = message.substring(11);
+						String[] infos = info.split("__");
+						for (String element : infos) {
+							String[] item = element.split("_");
+							chartData.put(item[0], Double.valueOf(item[1]));
+							System.out.println("put:"+item[0]+" "+item[1]);
+						}
+						
+						drawChart();
+					}
+					
 					if (message.startsWith("SEARCHRESULT:")) {
 						String str = message.substring(13);
 						if (str.isBlank()) {
@@ -1263,6 +1287,51 @@ public class AdminGUI extends JFrame {
 		transacMainPanel.add(lblNewLabel_4_1);
 	}
 
+
+	private void drawChart() {
+		charrtPanel.removeAll();
+		CategoryDataset categoryDataset = createDataSet();
+		JFreeChart chart = createChart(categoryDataset);
+		
+		ChartPanel chartPanel = new ChartPanel(chart);
+		chartPanel.setBounds(0,0,644,272);
+		chartPanel.setPreferredSize(new Dimension(644, 272));
+		charrtPanel.add(chartPanel);
+		
+		charrtPanel.revalidate();
+		charrtPanel.repaint();
+	}
+
+	private JFreeChart createChart(CategoryDataset categoryDataset) {
+		JFreeChart chart = ChartFactory.createLineChart(
+				"",
+				"DATE", 
+				"AMOUNT", 
+				categoryDataset, 
+				PlotOrientation.VERTICAL, 
+				true, 
+				true, 
+				false
+			);
+		chart.setBackgroundPaint(new Color(238,238, 238));
+		
+		CategoryPlot plot = chart.getCategoryPlot();
+		plot.setBackgroundPaint(new Color(238,238,238));
+		return chart;
+	}
+
+	private CategoryDataset createDataSet() {
+		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+		
+		// Chuyển chartData sang TreeMap để đảm bảo thứ tự
+		Map<String, Double> sortedChartData = new TreeMap<>(chartData);
+
+		for (String date : sortedChartData.keySet()) {
+			dataset.addValue(sortedChartData.get(date), "$", date.substring(0,6));
+		}
+		
+		return dataset;
+	}
 
 	private void addItemInDashboardTab() {
 		transactionHistoryPanel.removeAll();
